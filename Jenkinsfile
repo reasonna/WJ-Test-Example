@@ -9,10 +9,10 @@ pipeline {
         stage('Init') {
             steps {
                 script {
-                    println ✅✅ Init  ✅✅
+                    println "✅✅ Init  ✅✅"
                     init(map)
                     map.jira.auth_user = '$JIRA_CLOUD_CREDENTIANLS_USR:$JIRA_CLOUD_CREDENTIANLS_PSW'
-                    println map.jira.auth_user
+                    println "${map.jira.auth_user}"
                 }
             }
         }
