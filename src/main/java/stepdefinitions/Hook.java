@@ -9,7 +9,7 @@ import utils.AndroidManager;
 
 public class Hook {
 
-    @Before
+    @Before // 시나리오
     public void doHomeButtonBefore(){
         AndroidManager.getDriver().pressKey(new KeyEvent(AndroidKey.HOME));
     }
