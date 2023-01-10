@@ -2,7 +2,7 @@ def map = [:]
 pipeline {
     agent any
     environment{
-        JIRA_CLOUD_CREDENTIANLS = credentials("jira-cloud")
+        JIRA_CLOUD_CREDENTIANLS = credentials('jira-cloud')
     }
 
     stages {
