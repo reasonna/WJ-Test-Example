@@ -26,6 +26,7 @@ pipeline {
         }
     }
 }
+}
 
 def init (def map){
     map.jira = [:]
