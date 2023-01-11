@@ -41,6 +41,7 @@ def init (def map){
 }
 
 def getJiraIssue (String baseURL, String auth, String issueKey){
+    println baseURL
     def conn = new URL("${baseURL}/rest/api/3/issue/${issueKey}").openConnection()
     conn.setRequestMethod("GET")
     conn.setDoOutput(true)
