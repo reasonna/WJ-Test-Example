@@ -1,3 +1,7 @@
+import groovy.json.JsonSlurper 
+import groovy.json.JsonOutput
+import groovy.json.JsonBuilder
+
 def map = [:]
 pipeline {
         agent any
@@ -16,21 +20,37 @@ pipeline {
                 }
             }
         }
-        stage('Get test plan'){
-            steps{
-                script{
-                    println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
-                    map.issue = jiraGetIssue idOrKey: 'TEST-1', site: map.jira.site_name
-                    println "Iseeue = > ${map.issue}"
+            stage('Get test plan'){
+                steps{
+                    script{
+                        println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
+                        getJiraIssue(map.jira.base_url, map.jira.auth, "WC-3")
+                        // println "Iseeue = > ${map.issue}"
+                    }
                 }
             }
-        }
     }
 }
 
 def init (def map){
     map.jira = [:]
     map.jira.site_name = "REASONA"
+    map.jira.base_url = "https://reasona.atlassian.net"
 
     map.issue = null
+}
+
+def getJiraIssue (String baseURL, String auth, String issueKey){
+    def conn = new URL("${baseURL}/rest/api/3/issue/${issueKey}").openConnection()
+    conn.setReuestMethod("GET")
+    conn.setDoOutput(true)
+    conn.setRequestProperty("Content-Type", "Appilcation/json")
+    conn.setRequestProperty("Authorization", auth)
+    def responseCode = conn.getResponseCode()
+    def response = conn.getInputStream().getText()
+    def result = new JsonSlurper().parseText(response)
+
+    println responseCode
+    println response
+    println result
 }
