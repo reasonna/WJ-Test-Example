@@ -46,6 +46,8 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
     conn.setDoOutput(true)
     conn.setRequestProperty("Content-Type", "appilcation/json;charset=UTF-8")
     conn.setRequestProperty("Accept", "*/*")
+    conn.setRequestProperty("Accept-Encoding", "gzip, deflate, br")
+    conn.setRequestProperty("Content-Encoding", "gzip, deflate, br")
     conn.setRequestProperty("Authorization", auth)
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
