@@ -41,11 +41,11 @@ def init (def map){
 }
 
 def getJiraIssue (String baseURL, String auth, String issueKey){
-    def url =java.net.URLEncoder.encode("${baseURL}/rest/api/3/issue/${issueKey}", "UTF-8")
-    def conn = new URL(url).openConnection()
+    def conn = new URL("${baseURL}/rest/api/3/issue/${issueKey}").openConnection()
     conn.setRequestMethod("GET")
     conn.setDoOutput(true)
     conn.setRequestProperty("Content-Type", "appilcation/json;charset=UTF-8")
+    conn.setRequestProperty("Accept", "*/*")
     conn.setRequestProperty("Authorization", auth)
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
