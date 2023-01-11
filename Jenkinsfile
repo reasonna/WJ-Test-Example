@@ -7,6 +7,10 @@ pipeline {
         agent any   
         environment{ 
             JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
+
+            ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}" 
+
+
         }
 
         stages {
@@ -26,7 +30,10 @@ pipeline {
                         println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
                         map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, "WC-3")
                         // println "Iseeue = > ${map.issue}"
-                        println map.issue
+                        println ISSUE_KEY
+                        println map.issue.fields
+                        
+
                         
                     }
                 }
@@ -38,8 +45,11 @@ def init (def map){
     map.jira = [:]
     map.jira.site_name = "REASONA"
     map.jira.base_url = "https://reasona.atlassian.net"
+    map.jira.tabletInfoField = "customfield_10037"
+    map.jira.taetCaseJQLField ="customfield_10036"
 
     map.issue = null
+
 }
 
 def getJiraIssue (String baseURL, String auth, String issueKey){
