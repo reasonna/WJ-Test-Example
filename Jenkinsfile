@@ -20,7 +20,7 @@ pipeline {
             steps{
                 script{
                     println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
-                    map.issue = jiraGetIssue idOrKey: TEST-1, site: map.jira.site_name
+                    map.issue = jiraGetIssue idOrKey: 'TEST-1', site: map.jira.site_name
                     println "Iseeue = > ${map.issue}"
                 }
             }
@@ -30,7 +30,7 @@ pipeline {
 
 def init (def map){
     map.jira = [:]
-    map.jira.site_name = "REASONA_CLOUD"
+    map.jira.site_name = "REASONA"
 
     map.issue = null
 }
