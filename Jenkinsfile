@@ -4,8 +4,8 @@ import groovy.json.JsonBuilder
 
 def map = [:]
 pipeline {
-        agent any
-        environment{
+        agent any   
+        environment{ 
             JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
         }
 
@@ -13,9 +13,9 @@ pipeline {
             stage('Init') {
                 steps {
                     script {
-                        println "!!!!!!!!!!!!! Init !!!!!!!!!!!!!!"
-                        init(map)
-                        map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'
+                        println "!!!!!!!!!!!!! Init !!!!!!!!!!!!!!" 
+                        init(map)   
+                        map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'  
                         map.jira.auth = "Basic " + "${JIRA_CLOUD_CREDENTIALS_USR}:${JIRA_CLOUD_CREDENTIALS_PSW}".bytes.encodeBase64()
                 }
             }

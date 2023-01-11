@@ -9,8 +9,9 @@ import utils.AndroidManager;
 
 public class Hook {
 
-    @Before // 시나리오
+    @Before // 시나리오 시작하기 전에 실행 하는 
     public void doHomeButtonBefore(){
-        AndroidManager.getDriver().pressKey(new KeyEvent(AndroidKey.HOME));
+        // 홈으로 돌아간 다음 시작
+        AndroidManager.getDriver().pressKey(new KeyEvent(AndroidKey.HOME)); 
     }
 }
