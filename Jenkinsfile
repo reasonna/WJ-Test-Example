@@ -2,7 +2,7 @@ def map = [:]
 pipeline {
         agent any
         environment{
-            JIRA_CLOUD_CREDENTIANLS = credentials('jira-cloud')
+            JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
         }
 
         stages {
@@ -11,8 +11,8 @@ pipeline {
                     script {
                         println "!!!!!!!!!!!!! Init !!!!!!!!!!!!!!"
                         init(map)
-                        map.jira.auth_user = '$JIRA_CLOUD_CREDENTIANLS_USR:$JIRA_CLOUD_CREDENTIANLS_PSW'
-                        map.jira.auth = "Basic " + "${JIRA_CLOUD_CREDENTIANLS_USR}:${$JIRA_CLOUD_CREDENTIANLS_PSW}".bytes.encodeBase64()
+                        map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'
+                        map.jira.auth = "Basic " + "${JIRA_CLOUD_CREDENTIALS_USR}:${JIRA_CLOUD_CREDENTIALS_PSW}".bytes.encodeBase64()
                 }
             }
         }
