@@ -24,8 +24,10 @@ pipeline {
                 steps{
                     script{
                         println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
-                        getJiraIssue(map.jira.base_url, map.jira.auth, "WC-3")
+                        map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, "WC-3")
                         // println "Iseeue = > ${map.issue}"
+                        println map.issue
+                        
                     }
                 }
             }
