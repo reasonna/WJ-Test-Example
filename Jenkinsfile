@@ -45,7 +45,7 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
     conn.setRequestMethod("GET")
     conn.setDoOutput(true)
     conn.setRequestProperty("Content-Type", "application/json")
-    conn.setRequestProperty("Authorization", auth)
+    conn.addRequestProperty("Authorization", auth)
     def responseCode = conn.getResponseCode()
     // def response = conn.getInputStream().getText()
     // def result = new JsonSlurper().parseText(response)
