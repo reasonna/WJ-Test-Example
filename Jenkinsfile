@@ -22,21 +22,24 @@ pipeline {
                 }
             }
         }
-            stage('Get test plan'){
-                steps{
-                    script{
+        stage('Get test plan'){
+            steps{
+                script{
+                    try{
                         println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
                         map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                         // println "Iseeue = > ${map.issue}"
-                       
-                      
+
                         println "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
                         println map.issue.fields
 
-                        
+                    }
+                    catch(error){
+                        println error
                     }
                 }
             }
+        }
     }
 }
 
@@ -45,7 +48,7 @@ def init (def map){
     map.jira.site_name = "REASONA"
     map.jira.base_url = "https://reasona.atlassian.net"
     map.jira.tabletInfoField = "customfield_10037"
-    map.jira.taetCaseJQLField ="customfield_10036"
+    map.jira.testCaseJQLField ="customfield_10036"
 
     map.issue = null
 
