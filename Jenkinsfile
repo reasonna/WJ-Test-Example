@@ -30,8 +30,8 @@ pipeline {
                             map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                             // println "Iseeue = > ${map.issue}"
 
-                            println "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-                            println map.issue.fields
+                            // println "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                            // println map.issue.fields
 
                         }
                         catch(error){
