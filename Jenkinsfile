@@ -44,14 +44,22 @@ pipeline {
                             map.current_path = value
                         }
                     }
-                    println map.current_node
-                    println map.current_path
+                    if(map.current_node == null || map.current_path == null){
+                        jenkinsException(map, "Tablet Info Field is Required")
+                    }
+
+                    getJiraIssuesByJql(map.jira.base_url, map.jira.auth, jql)
+
                 }
             }
         }
     }
 }
 
+def jenkinsException(java.util.Map map, String error){
+    map.exceptionMsg = error
+    throw new RuntimeException("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + error + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+}
 def init (def map){
     map.jira = [:]
     map.jira.site_name = "REASONA"
@@ -80,11 +88,25 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
     def response = conn.getInputStream().getText()
     def result = new JsonSlurperClassic().parseText(response)
 
-    // println responseCode
-    // println response
-    // println result
-    // println conn.getErrorStream()
-    // println conn.getResponseMessage()
+    if(responseCode != 200){
+        throw new RuntimeException("Get Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+    }
+    return result
+}
 
+def getJiraIssuesByJql (String baseURL, String auth, String jql){
+    def conn = new URL("${baseURL}/rest/api/3/search?jql=${jql}").openConnection()
+    conn.setRequestMethod("GET")
+    conn.setDoOutput(true)
+    conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+    conn.addRequestProperty("Authorization", auth)
+    def responseCode = conn.getResponseCode()
+    def response = conn.getInputStream().getText()
+    def result = new JsonSlurperClassic().parseText(response)
+
+    if(responseCode != 200){
+        throw new RuntimeException("Get Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+    }
+    println result
     return result
 }
