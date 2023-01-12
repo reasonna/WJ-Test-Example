@@ -110,7 +110,7 @@ def init (def map){
     map.agents_ref = [
         "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      //구동가능한 기계
     ]
-
+    map.cucumber = [:]
     map.cucumber.feature_path = "auto_features"
     map.current_node = null
     map.current_path = null
