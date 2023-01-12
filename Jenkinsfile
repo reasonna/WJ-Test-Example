@@ -28,7 +28,7 @@ pipeline {
                 steps{
                     script{
                         println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
-                        map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
+                        map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, "WC-3")
                         // println "Iseeue = > ${map.issue}"
                         def result = map.issue
                         println result
