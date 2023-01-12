@@ -4,7 +4,10 @@ import groovy.json.JsonBuilder
 
 def map = [:]
 pipeline {
-    agent any   
+    agent any  
+    tools {
+        maven "jenkins-maven"
+    } 
     environment{ 
         JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
@@ -66,7 +69,7 @@ pipeline {
         stage('Download testcases on slave'){
             agent { label "${map.current_node}" }
             steps {
-                dir("${map.current_path}") {
+                dir("${map.current_path}/workspace/yuna") {
                     script {
                         def feature = "Feature: ${map.jira.featureName}"
                         map.testcases.each { key, value ->
@@ -90,13 +93,31 @@ pipeline {
                 }
             }
         }
-        
-    }
+        stage('Build'){
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}/workspace/yuna") {
+                    script {
+                        try {
+                            bat script: 'mvn', returnStdout:false
+                        } catch(error) {
+                            throwableException(map, error)
+                        }    
+                    } 
+                }
+            }
+        }
+    }        
 }
 
 def jenkinsException(java.util.Map map, String error){
     map.exceptionMsg = error
     throw new RuntimeException("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + error + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+}
+
+def throwableException(java.util.Map map, Exception e) {
+    map.exceptionMsg = e.toString()
+    throw e as java.lang.Throwable 
 }
 def init (def map){
     map.jira = [:]
