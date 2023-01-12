@@ -69,12 +69,14 @@ pipeline {
         stage('Download testcases on slave'){
             agent { label "${map.current_node}" }
             steps {
+                // dir로 path 지정 => 이곳에서 slave작업 수행
                 dir("${map.current_path}/workspace/yuna") {
                     script {
                         def feature = "Feature: ${map.jira.featureName}"
                         map.testcases.each { key, value ->
                             def addDescription = null 
                             if (value.contains("\r\n")){
+                                // 해당 jira issue key 붙여줌
                                 addDescription = value.replaceFirst("\r\n", ("\r\n" + key + "\n\n"))
                                 feature += addDescription 
                                 feature += "\n\n" 
@@ -84,15 +86,18 @@ pipeline {
                                 feature += "\n\n" 
                             }
                         }
+                            // 해당 파일 있으면 지우기 -> 할때마다 테스트 바뀌니까 (최신화)
                         if (fileExists("${map.cucumber.feature_path}")){
                             bat script: """ rmdir /s /q "${map.cucumber.feature_path}" """, returnStdout:false
-                        }
+                        }   // 파일 없으면 만들기
                          bat script: """ mkdir "${map.cucumber.feature_path}" """, returnStdout:false
+                         // auto.feature 이름 파일 만들고 그 안에 jira에서 가져온 시나리오 다 적어 주기
                          writeFile(file: "./${map.cucumber.feature_path}/auto.feature", text:feature, encoding:"UTF-8")
                     }
                 }
             }
         }
+        // 테스트 스크립트 빌드
         stage('Build'){
             agent { label "${map.current_node}" }
             steps {
@@ -107,17 +112,30 @@ pipeline {
                 }
             }
         }
+        // 테스트 수행 => appium
         stage('Run automation testing'){
             agent { label "${map.current_node}" }
             steps {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
                         try {
+                            // appium 연결/시작
                             bat script: 'adb devices', returnStdout:false
                             // bat script: 'adb kill-server', returnStdout:false
                             // bat script: 'adb start-server', returnStdout:false
+                            // Background에서 실행 -> 다음 스테이지 실행하기 위해
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
                             sleep 2
+
+                            if (fileExists("${map.cucumber.report_json}")){
+                                bat script: """ del "${map.cucumber.report_json}" """, returnStdout:false
+                            }
+                            if (fileExists("${map.cucumber.progress}")){
+                                bat script: """ del "${map.cucumber.progress}" """, returnStdout:false
+                            }
+                            if (fileExists("${map.cucumber.cucumber_html}")){
+                                bat script: """ del "${map.cucumber.cucumber_html}" """, returnStdout:false
+                            }
 
                             try{
                                 bat encoding:"UTF-8", script: "mvn exec:java -Dproject.build.sourceEncoding=UTF-8 -Dproject.reporting.outputEncoding=UTF-8 -Dexec.mainClass=io.cucumber.core.cli.Main -Dexec.args=\"${map.cucumber.feature_path} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\"", returnStdout:false
@@ -128,6 +146,16 @@ pipeline {
                             throwableException(map, error)
                         }    
                     } 
+                }
+                dir("${map.current_path}/workspace/yuna") {
+                    script {
+                        try {
+                            output = sh script: "netstat -aon | findstr 0.0.0.0:${APPIUM_PORT} | findstr LISTENING", returnStdout:true
+                            println output
+                        } catch(error) {
+
+                        }
+                    }
                 }
             }
         }
@@ -145,10 +173,10 @@ def throwableException(java.util.Map map, Exception e) {
 }
 def init (def map){
     map.jira = [:]
-    map.jira.site_name = "REASONA"
-    map.jira.base_url = "https://reasona.atlassian.net"
+    map.jira.site_name = "REASONA"                      // 내가 설정한 이름
+    map.jira.base_url = "https://reasona.atlassian.net" // jira 주소
     map.jira.featureName = null
-    map.jira.tabletInfoField = "customfield_10037"
+    map.jira.tabletInfoField = "customfield_10037"      // json online viewer로 보기
     map.jira.testCaseJQLField ="customfield_10036"
     map.testcases = [:]
     map.jira.scenario_field = "customfield_10035"
