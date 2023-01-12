@@ -31,7 +31,7 @@ pipeline {
                         map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, "WC-3")
                         // println "Iseeue = > ${map.issue}"
                         println ISSUE_KEY
-                        println map.issue.fields
+                        println map.issue[fields]
                         
 
                         
