@@ -99,7 +99,7 @@ pipeline {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
                         try {
-                            bat script: 'mvn', returnStdout:false
+                            bat script: 'mvn clean compile -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8', returnStdout:false
                         } catch(error) {
                             throwableException(map, error)
                         }    
