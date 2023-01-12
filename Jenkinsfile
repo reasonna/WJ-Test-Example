@@ -7,7 +7,7 @@ pipeline {
         agent any   
         environment{ 
             JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
-            // ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
+            ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
 
         }
 
@@ -26,12 +26,12 @@ pipeline {
                 steps{
                     script{
                         println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
-                        map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, "WC-3")
+                        map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                         // println "Iseeue = > ${map.issue}"
-                        def result = map.issue
-                        println result
+                       
+                      
                         println "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-                        println result.fields
+                        println map.issue.fields
 
                         
                     }
