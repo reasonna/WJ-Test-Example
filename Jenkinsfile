@@ -19,29 +19,29 @@ pipeline {
                         init(map)   
                         map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'  
                         map.jira.auth = "Basic " + "${JIRA_CLOUD_CREDENTIALS_USR}:${JIRA_CLOUD_CREDENTIALS_PSW}".bytes.encodeBase64()
+                    }
                 }
             }
-        }
-        stage('Get test plan'){
-            steps{
-                script{
-                    try{
-                        println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
-                        map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
-                        // println "Iseeue = > ${map.issue}"
+            stage('Get test plan'){
+                steps{
+                    script{
+                        try{
+                            println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
+                            map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
+                            // println "Iseeue = > ${map.issue}"
 
-                        println "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-                        println map.issue.fields
+                            println "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                            println map.issue.fields
 
-                    }
-                    catch(error){
-                        println error
+                        }
+                        catch(error){
+                            println error
+                        }
                     }
                 }
             }
         }
     }
-}
 
 def init (def map){
     map.jira = [:]
