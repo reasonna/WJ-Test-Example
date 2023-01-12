@@ -48,7 +48,14 @@ pipeline {
                         jenkinsException(map, "Tablet Info Field is Required")
                     }
 
-                    getJiraIssuesByJql(map.jira.base_url, map.jira.auth, jql)
+                    def result = getJiraIssuesByJql(map.jira.base_url, map.jira.auth, jql)
+                    if(result.issues.size() == 0){
+                        jenkinsException(map, "Invalid JQL")
+                    }
+                    for (def issue in result.issues){
+                        map.testcases.put(issue.key, issue.fields[map.jira.scenario_field].content[0].content[0].text)
+                    }
+                    println map.testcases
 
                 }
             }
@@ -66,7 +73,8 @@ def init (def map){
     map.jira.base_url = "https://reasona.atlassian.net"
     map.jira.tabletInfoField = "customfield_10037"
     map.jira.testCaseJQLField ="customfield_10036"
-    
+    map.testcases = [:]
+    map.jira.scenario_field = "customfield_10035"
     map.agents_ref = [
         "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      //구동가능한 기계
     ]
