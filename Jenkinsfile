@@ -11,7 +11,7 @@ pipeline {
     environment{ 
         JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
-
+        APPIUM_ADDR = "0.0.0.0"
     }
 
     stages {
@@ -113,7 +113,16 @@ pipeline {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
                         try {
-                            bat script: 'mvn clean compile -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8', returnStdout:false
+                            bat script: 'adb kill-server', returnStdout:false
+                            bat script: 'adb start-server', returnStdout:false
+                            bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
+                            sleep 2
+
+                            try{
+                                bat encoding:"UTF-8", script: "mvn exec:java -Dproject.build.sourceEncoding=UTF-8 -Dproject.reporting.outputEncoding=UTF-8 -Dexec.mainClass=io.cucumber.core.cli.Main -Dexec.args=\"${map.cucumber.feature_path} --glue ${map.cucumber.glue} --plugin json:${map.cucumber.report_json} --plugin progress:${map.cucumber.progress} --publish --plugin pretty --plugin html:${map.cucumber.cucumber_html}\"", returnStdout:false
+                            } catch(error){
+                                println "Automation testing error -> " + error
+                            }
                         } catch(error) {
                             throwableException(map, error)
                         }    
@@ -147,9 +156,13 @@ def init (def map){
     ]
     map.cucumber = [:]
     map.cucumber.feature_path = "auto_features"
+    map.cucumber.glue = "stepdefinitions"
+    map.cucumber.report_json = "cucumber.json"
+    map.cucumber.progress = "cucumber_progress.html"
+    map.cucumber.cucumber_html = "cucumber_report.html"
     map.current_node = null
     map.current_path = null
-
+    
     map.issue = null
 
 }
