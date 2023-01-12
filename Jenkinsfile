@@ -30,9 +30,10 @@ pipeline {
                         println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
                         map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                         // println "Iseeue = > ${map.issue}"
-        
-                        println map.issue.fields
-                        
+                        def result = map.issue
+                        println result
+                        println "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                        println result.fields
 
                         
                     }
@@ -62,11 +63,11 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
     def response = conn.getInputStream().getText()
     def result = new JsonSlurper().parseText(response)
 
-    println responseCode
-    println response
-    println result
-    println conn.getErrorStream()
-    println conn.getResponseMessage()
+    // println responseCode
+    // println response
+    // println result
+    // println conn.getErrorStream()
+    // println conn.getResponseMessage()
 
     return result
 }
