@@ -95,8 +95,8 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
 }
 
 def getJiraIssuesByJql (String baseURL, String auth, String jql){
-    println jql
-    def conn = new URL("${baseURL}/rest/api/3/search?jql=${jql}").openConnection()
+    def jqlEncode = java.net.URLEncoder.encode(jql, "UTF-8")
+    def conn = new URL("${baseURL}/rest/api/3/search?jql=${jqlEncode}").openConnection()
     conn.setRequestMethod("GET")
     conn.setDoOutput(true)
     conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
