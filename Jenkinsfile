@@ -95,6 +95,7 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
 }
 
 def getJiraIssuesByJql (String baseURL, String auth, String jql){
+    println jql
     def conn = new URL("${baseURL}/rest/api/3/search?jql=${jql}").openConnection()
     conn.setRequestMethod("GET")
     conn.setDoOutput(true)
