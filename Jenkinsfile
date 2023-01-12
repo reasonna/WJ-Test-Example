@@ -7,8 +7,7 @@ pipeline {
         agent any   
         environment{ 
             JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
-            ISSUE_KEY = $JIRA_TEST_PLAN_KEY
-
+            ISSUE_KEY = ${env.JIRA_TEST_PLAN_KEY}
 
         }
 
