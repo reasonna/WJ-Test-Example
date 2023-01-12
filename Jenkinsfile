@@ -29,6 +29,7 @@ pipeline {
                     map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                     // println "Iseeue = > ${map.issue}"
                     println map.issue.fields[map.jira.testCaseJQLField]
+                    println map.issue.fields[map.jira.tabletInfoField].value
                 }
             }
         }
