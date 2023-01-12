@@ -7,8 +7,7 @@ pipeline {
         agent any   
         environment{ 
             JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
-
-            ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}" 
+            ISSUE_KEY = $JIRA_TEST_PLAN_KEY
 
 
         }
@@ -18,6 +17,7 @@ pipeline {
                 steps {
                     script {
                         println "!!!!!!!!!!!!! Init !!!!!!!!!!!!!!" 
+                        println ISSUE_KEY
                         init(map)   
                         map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'  
                         map.jira.auth = "Basic " + "${JIRA_CLOUD_CREDENTIALS_USR}:${JIRA_CLOUD_CREDENTIALS_PSW}".bytes.encodeBase64()
