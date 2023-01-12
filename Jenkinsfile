@@ -113,8 +113,9 @@ pipeline {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
                         try {
-                            bat script: 'adb kill-server', returnStdout:false
-                            bat script: 'adb start-server', returnStdout:false
+                            bat script: 'adb devices', returnStdout:false
+                            // bat script: 'adb kill-server', returnStdout:false
+                            // bat script: 'adb start-server', returnStdout:false
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
                             sleep 2
 
