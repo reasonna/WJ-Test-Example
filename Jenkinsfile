@@ -28,10 +28,10 @@ pipeline {
                 steps{
                     script{
                         println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
-                        map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, "WC-3")
+                        map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                         // println "Iseeue = > ${map.issue}"
-                        println ISSUE_KEY
-                        println map.issue[fields]
+        
+                        println map.issue.fields
                         
 
                         
@@ -67,4 +67,6 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
     println result
     println conn.getErrorStream()
     println conn.getResponseMessage()
+
+    return result
 }
