@@ -28,38 +28,53 @@ pipeline {
                     println "!!!!!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
                     map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                     // println "Iseeue = > ${map.issue}"
-                    
+                    map.jira.featureName = map.issue.fields.components[0].name
+
+                    println map.jira.featureName
                 }
             }
         }
-        stage('Get testcases / Set node'){
-            steps{
-                script{
-                    println "!!!!!!!!!!!!!!!!! Get testcases / Set node !!!!!!!!!!!!!!!!!"
-                    def jql = map.issue.fields[map.jira.testCaseJQLField]         
-                    def testTablet = map.issue.fields[map.jira.tabletInfoField].value
-                    map.agents_ref.each { key, value -> 
-                        if(testTablet == key){
-                            map.current_node = key 
-                            map.current_path = value
-                        }
-                    }
-                    if(map.current_node == null || map.current_path == null){
-                        jenkinsException(map, "Tablet Info Field is Required")
-                    }
+        // stage('Get testcases / Set node'){
+        //     steps{
+        //         script{
+        //             println "!!!!!!!!!!!!!!!!! Get testcases / Set node !!!!!!!!!!!!!!!!!"
+        //             def jql = map.issue.fields[map.jira.testCaseJQLField]         
+        //             def testTablet = map.issue.fields[map.jira.tabletInfoField].value
+        //             map.agents_ref.each { key, value -> 
+        //                 if(testTablet == key){
+        //                     map.current_node = key 
+        //                     map.current_path = value
+        //                 }
+        //             }
+        //             if(map.current_node == null || map.current_path == null){
+        //                 jenkinsException(map, "Tablet Info Field is Required")
+        //             }
 
-                    def result = getJiraIssuesByJql(map.jira.base_url, map.jira.auth, jql)
-                    if(result.issues.size() == 0){
-                        jenkinsException(map, "Invalid JQL")
-                    }
-                    for (def issue in result.issues){
-                        map.testcases.put(issue.key, issue.fields[map.jira.scenario_field].content[0].content[0].text)
-                    }
-                    println map.testcases
+        //             def result = getJiraIssuesByJql(map.jira.base_url, map.jira.auth, jql)
+        //             if(result.issues.size() == 0){
+        //                 jenkinsException(map, "Invalid JQL")
+        //             }
+        //             for (def issue in result.issues){
+        //                 map.testcases.put(issue.key, issue.fields[map.jira.scenario_field].content[0].content[0].text)
+        //             }
+        //             println map.testcases
 
-                }
-            }
-        }
+        //         }
+        //     }
+        // }
+        // stage('Download testcases on slave'){
+        //     agent { label "${map.current_node}" }
+        //     steps {
+        //         dir("${map.current_path}") {
+        //             script {
+        //                 map.testcases.each { key, value ->
+
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        
     }
 }
 
@@ -71,6 +86,7 @@ def init (def map){
     map.jira = [:]
     map.jira.site_name = "REASONA"
     map.jira.base_url = "https://reasona.atlassian.net"
+    map.jira.featureName = null
     map.jira.tabletInfoField = "customfield_10037"
     map.jira.testCaseJQLField ="customfield_10036"
     map.testcases = [:]
