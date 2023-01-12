@@ -1,47 +1,39 @@
-import groovy.json.JsonSlurper 
+import groovy.json.JsonSlurperClassic 
 import groovy.json.JsonOutput
 import groovy.json.JsonBuilder
 
 def map = [:]
 pipeline {
-        agent any   
-        environment{ 
-            JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
-            ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
+    agent any   
+    environment{ 
+        JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
+        ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
 
-        }
+    }
 
-        stages {
-            stage('Init') {
-                steps {
-                    script {
-                        println "!!!!!!!!!!!!! Init !!!!!!!!!!!!!!" 
-                        init(map)   
-                        map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'  
-                        map.jira.auth = "Basic " + "${JIRA_CLOUD_CREDENTIALS_USR}:${JIRA_CLOUD_CREDENTIALS_PSW}".bytes.encodeBase64()
-                    }
+    stages {
+        stage('Init') {
+            steps {
+                script {
+                    println "!!!!!!!!!!!!! Init !!!!!!!!!!!!!!" 
+                    init(map)   
+                    map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'  
+                    map.jira.auth = "Basic " + "${JIRA_CLOUD_CREDENTIALS_USR}:${JIRA_CLOUD_CREDENTIALS_PSW}".bytes.encodeBase64()
                 }
             }
-            stage('Get test plan'){
-                steps{
-                    script{
-                        try{
-                            println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
-                            map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
-                            // println "Iseeue = > ${map.issue}"
-
-                            // println "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-                            // println map.issue.fields
-
-                        }
-                        catch(error){
-                            println error
-                        }
-                    }
+        }
+        stage('Get test plan'){
+            steps{
+                script{                    
+                    println "!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
+                    map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
+                    // println "Iseeue = > ${map.issue}"
+                    println map.issue.fields 
                 }
             }
         }
     }
+}
 
 def init (def map){
     map.jira = [:]
@@ -62,7 +54,7 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
     conn.addRequestProperty("Authorization", auth)
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
-    def result = new JsonSlurper().parseText(response)
+    def result = new JsonSlurperClassic().parseText(response)
 
     // println responseCode
     // println response
