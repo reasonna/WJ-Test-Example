@@ -186,21 +186,21 @@ pipeline {
                                 current_issue = r.description.trim()
                                 scenario_name = r.name.trim()
 
-                                def before = r.before[0]
-                                def after = r.after[0]
+                                def before = r.before
+                                def after = r.after
                                 
                                 println "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
                                 if(before) {
-                                   if(!before.result.status.contains("passed")) {
+                                   if(!before[0].result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
-                                        map.cucumber.errorMsg = before.result.error_message
+                                        map.cucumber.errorMsg = before[0].result.error_message
                                    }
                                 }
                                 println "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
                                 if(after) {
-                                    if(!after.result.status.contains("passed")) {
+                                    if(!after[0].result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
-                                        map.cucumber.errorMsg = after.result.error_message
+                                        map.cucumber.errorMsg = after[0].result.error_message
                                     }
                                 }
                                  println "#######################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
