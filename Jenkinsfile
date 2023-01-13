@@ -150,11 +150,11 @@ pipeline {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
                         try {
-                            output = bat script: "netstat -aon | findstr 0.0.0.0:${APPIUM_PORT} | findstr LISTENING", returnStdout:true
+                            output = bat encoding: "UTF-8", script: "netstat -aon | findstr 0.0.0.0:${APPIUM_PORT} | findstr LISTENING", returnStdout:true
                             pid = output.substring(output.length()-9)
                             sleep 2 
                             println pid 
-                            kill_output = bat script: "taskkill /F /IM ${pid}", returnStdout:true
+                            kill_output = bat encoding: "UTF-8", script: "taskkill /F /IM ${pid}", returnStdout:true
                             echo kill_output
 
                         } catch(error) {
