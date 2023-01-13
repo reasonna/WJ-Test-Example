@@ -205,16 +205,18 @@ pipeline {
                                 }
                                  println "#######################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
                                 for(def step in r.steps) {
-                                    println step
                                     if(!step.result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = step.result.error_message
                                         if(map.cucumber.errorMsg == null) {
-                                            continue
+                                            // TODO undefine인 경우 처리하기
+
+                                            break 
                                         }
                                         def bugPayload = createBugPayload("Defect of ${current_issue}", map.cucumber.errorMsg)
                                         createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
                                         
+                                        break
                                     }
                                 }
                             }
