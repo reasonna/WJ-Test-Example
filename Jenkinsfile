@@ -205,6 +205,7 @@ pipeline {
                                 }
                                  println "#######################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
                                 for(def step in r.steps) {
+                                    println step
                                     if(!step.result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = step.result.error_message
