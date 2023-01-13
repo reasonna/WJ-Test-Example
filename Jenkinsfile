@@ -176,7 +176,6 @@ pipeline {
                         try {
                             map.cucumber.result_json = readFile file:map.cucumber.report_json
                             def report_json = new JsonSlurperClassic().parseText(map.cucumber.result_json as String)
-                            println report_json
 
                             def report_arr = report_json[0].elements
                             
@@ -190,19 +189,21 @@ pipeline {
                                 def before = r.before[0]
                                 def after = r.after[0]
                                 
+                                println "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
                                 if(before) {
                                    if(!before.result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = before.result.error_message
                                    }
                                 }
+                                println "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
                                 if(after) {
                                     if(!after.result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = after.result.error_message
                                     }
                                 }
-
+                                 println "#######################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
                                 for(def step in r.steps) {
                                     if(!step.result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
