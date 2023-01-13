@@ -208,9 +208,10 @@ pipeline {
                                     if(!step.result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = step.result.error_message
-                                        def bugPayload = createBugPayload("Defect of ${current_issue}", map.cucumber.errorMsg)
-                                        println bugPayload
-                                        createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+                                        println map.cucumber.errorMsg
+                                        // def bugPayload = createBugPayload("Defect of ${current_issue}", map.cucumber.errorMsg)
+                                        // println bugPayload
+                                        // createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                         
                                     }
