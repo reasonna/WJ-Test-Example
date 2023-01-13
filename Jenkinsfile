@@ -171,9 +171,8 @@ pipeline {
                     script {
                         try {
                             map.cucumber.result_json = readFile file:map.cucumber.report_json
-                            println map.cucumber.report_json
-                            // def report_json = new JsonSlurperClassic().parseText(map.cucumber.report_json as String)
-                            // println report_json
+                            def report_json = new JsonSlurperClassic().parseText(map.cucumber.result_json as String)
+                            println report_json
 
                             // def report_arr = report_json[0].elements
                             
