@@ -72,6 +72,7 @@ pipeline {
                 // dir로 path 지정 => 이곳에서 slave작업 수행
                 dir("${map.current_path}/workspace/yuna") {
                     script {
+                        println "!!!!!!!!!!!!!!!!! Download testcases on slave !!!!!!!!!!!!!!!!!"
                         def feature = "Feature: ${map.jira.featureName}\n\n"
                         map.testcases.each { key, value ->
                             def addDescription = null 
@@ -86,7 +87,7 @@ pipeline {
                                 feature += "\n\n" 
                             }
                         }
-                            // 해당 파일 있으면 지우기 -> 할때마다 테스트 바뀌니까 (최신화)
+                            // 해당 폴더 있으면 지우기 -> 할때마다 테스트 바뀌니까 (최신화)
                         if (fileExists("${map.cucumber.feature_path}")){
                             bat script: """ rmdir /s /q "${map.cucumber.feature_path}" """, returnStdout:false
                         }   // 파일 없으면 만들기
@@ -103,6 +104,7 @@ pipeline {
             steps {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
+                        println "!!!!!!!!!!!!!!!!! Build !!!!!!!!!!!!!!!!!"
                         try {
                             bat script: 'mvn clean compile -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8', returnStdout:false
                         } catch(error) {
@@ -118,6 +120,7 @@ pipeline {
             steps {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
+                        println "!!!!!!!!!!!!!!!!! Run automation testing !!!!!!!!!!!!!!!!!"
                         try {
                             // appium 연결/시작
                             bat script: 'adb devices', returnStdout:false
@@ -126,7 +129,7 @@ pipeline {
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
                             sleep 2
-
+                             // 해당 파일 있으면 지우기 -> 할때마다 테스트 바뀌니까 (최신화)
                             if (fileExists("${map.cucumber.report_json}")){
                                 bat script: """ del "${map.cucumber.report_json}" """, returnStdout:false
                             }
@@ -169,28 +172,48 @@ pipeline {
             steps {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
+                        println "!!!!!!!!!!!!!!!!! Analysis test result !!!!!!!!!!!!!!!!!"
                         try {
                             map.cucumber.result_json = readFile file:map.cucumber.report_json
                             def report_json = new JsonSlurperClassic().parseText(map.cucumber.result_json as String)
                             println report_json
 
-                            // def report_arr = report_json[0].elements
+                            def report_arr = report_json[0].elements
                             
-                            // def current_issue = null
-                            // def scenario_name = null
+                            def current_issue = null
+                            def scenario_name = null
 
-                            // for(def r in report_arr){
-                            //     current_issue = r.description.trim()
-                            //     scenario_name = r.name.trim()
+                            for(def r in report_arr){
+                                current_issue = r.description.trim()
+                                scenario_name = r.name.trim()
 
-                            //     def before = r.before[0]
-                            //     def after = r.after[0]
+                                def before = r.before[0]
+                                def after = r.after[0]
                                 
-                            //     if(before) {
-                            //        if(!before.result.status.contains("passed")) {
-                            //         // TODO 로그 가져오기, 지라 defact issue 생성
-                            //        }
-                            // }
+                                if(before) {
+                                   if(!before.result.status.contains("passed")) {
+                                    // TODO 로그 가져오기, 지라 defact issue 생성
+                                        map.cucumber.errorMsg = before.result.error_message
+                                   }
+                                }
+                                if(after) {
+                                    if(!after.result.status.contains("passed")) {
+                                    // TODO 로그 가져오기, 지라 defact issue 생성
+                                        map.cucumber.errorMsg = after.result.error_message
+                                    }
+                                }
+
+                                for(def step in r.steps) {
+                                    if(!step.result.status.contains("passed")) {
+                                    // TODO 로그 가져오기, 지라 defact issue 생성
+                                        map.cucumber.errorMsg = step.result.error_message
+                                        def bugPayload = createBugPayload("Defect of ${current_issue}", map.cucumber.errorMsg)
+                                        createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+
+                        
+                                    }
+                                }
+                            }
                         } catch(error) {
                             throwableException(map, error)
                         }    
@@ -231,6 +254,7 @@ def init (def map){
     map.current_node = null
     map.current_path = null
     map.cucumber.result_json = null
+    map.cucumber.errorMsg = null
     
     map.issue = null
 
@@ -268,4 +292,51 @@ def getJiraIssuesByJql (String baseURL, String auth, String jql){
     }
     println result
     return result
+}
+
+def createBugPayload(String summary, String errorMessage) {
+    def payload = [
+         "fields": [
+            "summary": "${summary}",
+            "project": [
+                "id": "10002"
+            ],
+            "issuetype": [
+                "id": "10006"
+            ],
+            "description" : [
+               "type": "doc",
+                "version": 1,
+                "content": [
+                    [
+                    "type": "paragraph",
+                    "content": [
+                        [
+                        "text":" ${errorMessage}",
+                        "type": "text"
+                        ]
+                    ]
+                    ]
+                ]
+            ]
+         ]
+    ]
+    return JsonOutput.toJson(payload)
+}
+
+def createJiraIssue (String baseURL, String auth, String bugPayload) {
+    def conn = new URL("${baseURL}/rest/api/3/issue").openConnection()
+    conn.setRequestMethod("POST")
+    conn.setDoOutput(true)
+    conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+    conn.addRequestProperty("Authorization", auth)
+    if(bugPayload) {
+        conn.getOutputStream().write(bugPayload.getBytes("UTF-8"))
+    }
+    def responseCode = conn.getResponseCode()
+    def response = conn.getInputStream().getText()
+
+    if(responseCode != 201){
+        throw new RuntimeException("Get Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+    }
 }
