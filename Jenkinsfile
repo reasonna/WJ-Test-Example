@@ -151,9 +151,14 @@ pipeline {
                     script {
                         try {
                             output = bat script: "netstat -aon | findstr 0.0.0.0:${APPIUM_PORT} | findstr LISTENING", returnStdout:true
-                            println output
-                        } catch(error) {
+                            pid = output.substring(output.length()-9)
+                            sleep 2 
+                            println pid 
+                            kill_output = bat script: "taskkill /F /IM ${pid}", returnStdout:true
+                            echo kill_output
 
+                        } catch(error) {
+                            throwableException(map, error)
                         }
                     }
                 }
