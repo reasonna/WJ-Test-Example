@@ -164,6 +164,40 @@ pipeline {
                 }
             }
         }
+        stage('Analysis test result'){
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}/workspace/yuna") {
+                    script {
+                        try {
+                            map.cucumber.result_json = readFile file:map.cucumber.report_json
+                            def report_json = new JsonSlurperClassic().parseText(map.cucumber.report_json as String)
+                            println report_json
+
+                            // def report_arr = report_json[0].elements
+                            
+                            // def current_issue = null
+                            // def scenario_name = null
+
+                            // for(def r in report_arr){
+                            //     current_issue = r.description.trim()
+                            //     scenario_name = r.name.trim()
+
+                            //     def before = r.before[0]
+                            //     def after = r.after[0]
+                                
+                            //     if(before) {
+                            //        if(!before.result.status.contains("passed")) {
+                            //         // TODO 로그 가져오기, 지라 defact issue 생성
+                            //        }
+                            // }
+                        } catch(error) {
+                            throwableException(map, error)
+                        }    
+                    } 
+                }
+            }
+        }
     }        
 }
 
@@ -196,6 +230,7 @@ def init (def map){
     map.cucumber.cucumber_html = "cucumber_report.html"
     map.current_node = null
     map.current_path = null
+    map.cucumber.result_json = null
     
     map.issue = null
 
