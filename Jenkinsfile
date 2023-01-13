@@ -72,7 +72,7 @@ pipeline {
                 // dir로 path 지정 => 이곳에서 slave작업 수행
                 dir("${map.current_path}/workspace/yuna") {
                     script {
-                        def feature = "Feature: ${map.jira.featureName}"
+                        def feature = "Feature: ${map.jira.featureName}\n\n"
                         map.testcases.each { key, value ->
                             def addDescription = null 
                             if (value.contains("\r\n")){
@@ -150,7 +150,7 @@ pipeline {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
                         try {
-                            output = sh script: "netstat -aon | findstr 0.0.0.0:${APPIUM_PORT} | findstr LISTENING", returnStdout:true
+                            output = bat script: "netstat -aon | findstr 0.0.0.0:${APPIUM_PORT} | findstr LISTENING", returnStdout:true
                             println output
                         } catch(error) {
 
