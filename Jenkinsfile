@@ -208,6 +208,7 @@ pipeline {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = step.result.error_message
                                         def bugPayload = createBugPayload("Defect of ${current_issue}", map.cucumber.errorMsg)
+                                        println bugPayload
                                         createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                         
@@ -286,7 +287,7 @@ def getJiraIssuesByJql (String baseURL, String auth, String jql){
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
     def result = new JsonSlurperClassic().parseText(response)
-
+    
     if(responseCode != 200){
         throw new RuntimeException("Get Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
     }
@@ -335,7 +336,6 @@ def createJiraIssue (String baseURL, String auth, String bugPayload) {
     }
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
-
     if(responseCode != 201){
         throw new RuntimeException("Get Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
     }
