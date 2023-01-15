@@ -314,16 +314,22 @@ def createBugPayload(String summary, String errorMessage) {
                "type": "doc",
                 "version": 1,
                 "content": [
-                    [
-                    "type": "paragraph",
-                    "content": [
-                        [
-                        "text":" ${errorMessage}",
-                        "type": "text"
+                    [ 
+                        "type": "codeBlock",
+                        "attrs": [
+                            "language": "java"
+                            ],
+                        "content": [
+                            [
+                            "text":" ${errorMessage}",
+                            "type": "text"
+                            ]
                         ]
                     ]
-                    ]
                 ]
+            ],
+            "assignee": [
+                "id": "63bceb9d713349bea186f1f5"
             ]
          ]
     ]
