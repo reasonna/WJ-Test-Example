@@ -259,7 +259,7 @@ pipeline {
                         try {
                             if(map.cucumber.defect_info.size() > 0) {
                                 map.cucumber.defect_info.each{key, value -> 
-                                    bat script: "curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@defect_screenshots/${value}.png' ${map.jira.base_url}/rest/api/3/issue/${key}/attachments", returnStdout:false
+                                    sh script: "curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@defect_screenshots/${value}.png' ${map.jira.base_url}/rest/api/3/issue/${key}/attachments", returnStdout:false
                                 }
                             }
                             
