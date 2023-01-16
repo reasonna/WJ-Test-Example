@@ -224,23 +224,15 @@ pipeline {
                                             map.cucumber.errorMsg = "${step.name} No Match Method"
                                             def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
                                             def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
-                                            println res
-                                            println "###########################"
-                                            println res["key"]
-                                            println createLinkPayload(res.key, ISSUE_KEY, "Defect")
 
-                                            // linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
+                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
 
                                             break 
                                         }
                                         def bugPayload = createBugPayload("Defect of ${current_issue}", map.cucumber.errorMsg)
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
-                                        println res
-                                        println "#####!!!!!!!!!!!!!!!!!!!!!!#"
-                                        println res.key
-                                        println createLinkPayload(res.key, ISSUE_KEY, "Defect")
 
-                                        // linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
 
                                         
                                         break
@@ -379,10 +371,11 @@ def createJiraIssue (String baseURL, String auth, String bugPayload) {
     }
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
+    def result = new JsonSlurperClassic().parseText(response)
     if(responseCode != 201){
         throw new RuntimeException("Create Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
     }
-    return response
+    return result
 }
 
 def createLinkPayload(String outwardIssue, String inwardIssue, String linkType) {
