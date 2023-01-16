@@ -184,32 +184,33 @@ pipeline {
 
                             for(def r in report_arr){
                                 current_issue = r.description.trim()
-                                scenario_name = r.name.trim()
+                                scenario_name = r.name.trim().replaceAll(" ", "_")
 
                                 def before = r.before
                                 def after = r.after
                                 
                                 if(before) {
                                    if(!before[0].result.status.contains("passed")) {
-                                    // TODO 로그 가져오기, 지라 defact issue 생성
+                                        // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = before[0].result.error_message
                                         def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
 
+                                        map.cucumber.defect_info.put(res.key, scenario_name)
+                                        
                                         continue 
                                    }
                                 }
                                 if(after) {
                                     if(!after[0].result.status.contains("passed")) {
-                                    // TODO 로그 가져오기, 지라 defact issue 생성
+                                        // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = after[0].result.error_message
                                         def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-
 
                                         continue 
                                     }
@@ -217,7 +218,7 @@ pipeline {
                                  
                                 for(def step in r.steps) {
                                     if(!step.result.status.contains("passed")) {
-                                    // TODO 로그 가져오기, 지라 defact issue 생성
+                                        // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = step.result.error_message
                                         if(map.cucumber.errorMsg == null) {
                                             // TODO undefine인 경우 처리하기
@@ -234,13 +235,34 @@ pipeline {
 
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
 
-                                        
+                                        map.cucumber.defect_info.put(res.key, scenario_name)
+
                                         break
                                     }
                                 }
                             }
                             
 
+                        } catch(error) {
+                            throwableException(map, error)
+                        }    
+                    } 
+                }
+            }
+        }
+        stage('Attach defect screenshot'){
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}/workspace/yuna") {
+                    script {
+                        println "!!!!!!!!!!!!!!!!! Attach defect screenshot !!!!!!!!!!!!!!!!!"
+                        try {
+                            if(map.cucumber.defect_info.size() > 0) {
+                                map.cucumber.defect_info.each{key, value -> 
+                                    bat script: "curl -D- -u ${map.jira.auth_user} -X POST -H 'X-Atlassian-Token: no-check' -F 'file=@defect_screenshots/${value}.png' ${map.jira.base_url}/rest/api/3/issue/${key}/attachments", returnStdout:false
+                                }
+                            }
+                            
                         } catch(error) {
                             throwableException(map, error)
                         }    
@@ -282,6 +304,7 @@ def init (def map){
     map.current_path = null
     map.cucumber.result_json = null
     map.cucumber.errorMsg = null
+    map.cucumber.defect_info = [:]
     
     map.issue = null
 
@@ -312,6 +335,7 @@ def getJiraIssuesByJql (String baseURL, String auth, String jql){
     conn.addRequestProperty("Authorization", auth)
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
+    //  json으로 바꿔서 값 받기
     def result = new JsonSlurperClassic().parseText(response)
     
     if(responseCode != 200){
