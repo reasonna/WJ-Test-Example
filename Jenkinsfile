@@ -226,7 +226,7 @@ pipeline {
                                             def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
                                             println res
                                             println "###########################"
-                                            println res.key
+                                            println res["key"]
                                             println createLinkPayload(res.key, ISSUE_KEY, "Defect")
 
                                             // linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
