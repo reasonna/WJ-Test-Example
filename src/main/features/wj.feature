@@ -13,7 +13,7 @@ Scenario: Book View
 
   Given library click
   When search button click
-  And  search input "귀로 듣는 모차르트"
+  And  search input ""
   And search click
   And click 2nd book
   And ok check click
