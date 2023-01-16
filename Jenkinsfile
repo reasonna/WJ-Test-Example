@@ -216,7 +216,7 @@ pipeline {
                                         map.cucumber.errorMsg = step.result.error_message
                                         if(map.cucumber.errorMsg == null) {
                                             // TODO undefine인 경우 처리하기
-                                            map.cucumber.errorMsg = "${step.result.name} No Match Method"
+                                            map.cucumber.errorMsg = "${step.name} No Match Method"
                                             def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
                                             createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
