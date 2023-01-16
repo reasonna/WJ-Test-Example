@@ -189,27 +189,36 @@ pipeline {
                                 def before = r.before
                                 def after = r.after
                                 
-                                println "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
                                 if(before) {
                                    if(!before[0].result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = before[0].result.error_message
+                                        def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
+                                        createJiraIssue(map.jira.base_url, map,jira.auth, bugPayload)
+
+                                        continue 
                                    }
                                 }
-                                println "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
                                 if(after) {
                                     if(!after[0].result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = after[0].result.error_message
+                                        def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
+                                        createJiraIssue(map.jira.base_url, map,jira.auth, bugPayload)
+
+                                        continue 
                                     }
                                 }
-                                 println "#######################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+                                 
                                 for(def step in r.steps) {
                                     if(!step.result.status.contains("passed")) {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = step.result.error_message
                                         if(map.cucumber.errorMsg == null) {
                                             // TODO undefine인 경우 처리하기
+                                            map.cucumber.errorMsg = "${step.result.name} No Match Method"
+                                            def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
+                                            createJiraIssue(map.jira.base_url, map,jira.auth, bugPayload)
 
                                             break 
                                         }
@@ -309,6 +318,9 @@ def createBugPayload(String summary, String errorMessage) {
             ],
             "issuetype": [
                 "id": "10006"
+            ],
+            "priority":[
+                "name":"High"
             ],
             "description" : [
                "type": "doc",
