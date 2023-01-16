@@ -235,8 +235,11 @@ pipeline {
                                         }
                                         def bugPayload = createBugPayload("Defect of ${current_issue}", map.cucumber.errorMsg)
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+                                        println res
+                                        println res.key
+                                        println createLinkPayload(res.key, ISSUE_KEY, "Defect")
 
-                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
+                                        // linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
 
                                         
                                         break
