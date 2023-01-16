@@ -478,7 +478,7 @@ def editIssuePayload(String reportLink) {
 }
 
 def editIssue (String baseURL, String auth, String payload, String issueKey) {
-    def conn = new URL("${baseURL}rest/api/3/issue/${issueKey}").openConnection()
+    def conn = new URL("${baseURL}/rest/api/3/issue/${issueKey}").openConnection()
     conn.setRequestMethod("PUT")
     conn.setDoOutput(true)
     conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
