@@ -270,6 +270,32 @@ pipeline {
                 }
             }
         }
+         stage('Generate cucumber reports'){
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}/workspace/yuna") {
+                    script {
+                        println "!!!!!!!!!!!!!!!!! Generate cucumber reports !!!!!!!!!!!!!!!!!"
+                        try {
+                                cucumber buildStatus: 'UNSTABLE',
+                                        reportTitle: 'cucumber report',
+                                        fileIncludePattern: '**/*.json',
+                                        trendsLimit: 10,
+                                        classifications: [
+                                            [
+                                                'key': 'Browser',
+                                                'value': 'Chrome'
+                                            ]
+                                        ]
+                            }
+                            
+                        } catch(error) {
+                            throwableException(map, error)
+                        }    
+                    } 
+                }
+            }
+        }
     }        
 }
 
