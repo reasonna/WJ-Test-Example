@@ -194,7 +194,9 @@ pipeline {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = before[0].result.error_message
                                         def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
-                                        createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+                                        def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
 
                                         continue 
                                    }
@@ -204,7 +206,10 @@ pipeline {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = after[0].result.error_message
                                         def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
-                                        createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+                                        def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
+
 
                                         continue 
                                     }
@@ -218,18 +223,24 @@ pipeline {
                                             // TODO undefine인 경우 처리하기
                                             map.cucumber.errorMsg = "${step.name} No Match Method"
                                             def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
-                                            createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+                                            def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+
+                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
+
 
                                             break 
                                         }
                                         def bugPayload = createBugPayload("Defect of ${current_issue}", map.cucumber.errorMsg)
-                                        createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+                                        def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
+
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
+
                                         
                                         break
                                     }
                                 }
                             }
-                            // 링크걸어주기
+                            
 
                         } catch(error) {
                             throwableException(map, error)
@@ -361,8 +372,42 @@ def createJiraIssue (String baseURL, String auth, String bugPayload) {
     }
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
+    if(responseCode != 201){
+        throw new RuntimeException("Create Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+    }
+    return response
+}
+
+def createLinkPayload(String outwardIssue, String inwardIssue, String linkType) {
+    def payload = [
+         "fields": [
+            "outwardIssue": [
+                "key": "${outwardIssue}"
+            ],
+             "inwardIssue": [
+                "key": "${inwardIssue}"
+             ],
+            "type": [
+                "name": "${linkType}"
+            ]
+         ]
+    ]
+    return JsonOutput.toJson(payload)
+}
+
+def linkIssue (String baseURL, String auth, String payload) {
+    def conn = new URL("${baseURL}/rest/api/3/issueLink").openConnection()
+    conn.setRequestMethod("POST")
+    conn.setDoOutput(true)
+    conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+    conn.addRequestProperty("Authorization", auth)
+    if(payload) {
+        conn.getOutputStream().write(payload.getBytes("UTF-8"))
+    }
+    def responseCode = conn.getResponseCode()
+    def response = conn.getInputStream().getText()
     println response
     if(responseCode != 201){
-        throw new RuntimeException("Get Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+        throw new RuntimeException("Link Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
     }
 }
