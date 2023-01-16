@@ -194,7 +194,7 @@ pipeline {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = before[0].result.error_message
                                         def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
-                                        createJiraIssue(map.jira.base_url, map,jira.auth, bugPayload)
+                                        createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                         continue 
                                    }
@@ -204,7 +204,7 @@ pipeline {
                                     // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = after[0].result.error_message
                                         def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
-                                        createJiraIssue(map.jira.base_url, map,jira.auth, bugPayload)
+                                        createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                         continue 
                                     }
@@ -218,7 +218,7 @@ pipeline {
                                             // TODO undefine인 경우 처리하기
                                             map.cucumber.errorMsg = "${step.result.name} No Match Method"
                                             def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
-                                            createJiraIssue(map.jira.base_url, map,jira.auth, bugPayload)
+                                            createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                             break 
                                         }
