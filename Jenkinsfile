@@ -292,6 +292,11 @@ pipeline {
                                             'value': 'Chrome'
                                         ]
                                     ]
+
+                            def reportLink = "${BUILD_URL}/${map.cucumber.report_link}"
+                            
+                            editIssue(map.jira.base_url, map.jira.auth,editIssuePayload(reportLink), ISSUE_KEY)
+
                         } catch(error) {
                             throwableException(map, error)
                         }    
@@ -334,7 +339,7 @@ def init (def map){
     map.cucumber.result_json = null
     map.cucumber.errorMsg = null
     map.cucumber.defect_info = [:]
-    
+    map.cucumber.report_link = "cucumber-html-reports_f43d712d-34cf-37e2-891d-e19a85379e59/overview-features.html"
     map.issue = null
 
 }
@@ -460,5 +465,31 @@ def linkIssue (String baseURL, String auth, String payload) {
     println response
     if(responseCode != 201){
         throw new RuntimeException("Link Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+    }
+}
+
+def editIssuePayload(String reportLink) {
+    def payload = [
+        "fields":[
+            "customfield_10038":"${reportLink}"
+        ]
+    ]
+    return JsonOutput.toJson(payload)
+}
+
+def editIssue (String baseURL, String auth, String payload, String issueKey) {
+    def conn = new URL("${baseURL}rest/api/3/issue/${issueKey}").openConnection()
+    conn.setRequestMethod("PUT")
+    conn.setDoOutput(true)
+    conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+    conn.addRequestProperty("Authorization", auth)
+    if(payload) {
+        conn.getOutputStream().write(payload.getBytes("UTF-8"))
+    }
+    def responseCode = conn.getResponseCode()
+    def response = conn.getInputStream().getText()
+   
+    if(responseCode != 204){
+        throw new RuntimeException("Edit Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
     }
 }
