@@ -229,6 +229,8 @@ pipeline {
                                     }
                                 }
                             }
+                            // 링크걸어주기
+
                         } catch(error) {
                             throwableException(map, error)
                         }    
@@ -359,6 +361,7 @@ def createJiraIssue (String baseURL, String auth, String bugPayload) {
     }
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
+    println response
     if(responseCode != 201){
         throw new RuntimeException("Get Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
     }
