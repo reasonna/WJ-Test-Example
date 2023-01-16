@@ -12,6 +12,9 @@ pipeline {
         JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
         APPIUM_ADDR = "0.0.0.0"
+        BUILD_ID = "${BUILD_ID}"
+        BUILD_URL = "${BUILD_URL}"
+
     }
 
     stages {
@@ -19,6 +22,8 @@ pipeline {
             steps {
                 script {
                     println "!!!!!!!!!!!!!!!!! Init !!!!!!!!!!!!!!!!!" 
+                    println BUILD_ID
+                    println BUILD_URL
                     init(map)   
                     map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'  
                     map.jira.auth = "Basic " + "${JIRA_CLOUD_CREDENTIALS_USR}:${JIRA_CLOUD_CREDENTIALS_PSW}".bytes.encodeBase64()
