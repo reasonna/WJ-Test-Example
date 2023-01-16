@@ -277,18 +277,16 @@ pipeline {
                     script {
                         println "!!!!!!!!!!!!!!!!! Generate cucumber reports !!!!!!!!!!!!!!!!!"
                         try {
-                                cucumber buildStatus: 'UNSTABLE',
-                                        reportTitle: 'cucumber report',
-                                        fileIncludePattern: '**/*.json',
-                                        trendsLimit: 10,
-                                        classifications: [
-                                            [
-                                                'key': 'Browser',
-                                                'value': 'Chrome'
-                                            ]
+                            cucumber buildStatus: 'UNSTABLE',
+                                    reportTitle: 'cucumber report',
+                                    fileIncludePattern: '**/*.json',
+                                    trendsLimit: 10,
+                                    classifications: [
+                                        [
+                                            'key': 'Browser',
+                                            'value': 'Chrome'
                                         ]
-                            }
-                            
+                                    ]
                         } catch(error) {
                             throwableException(map, error)
                         }    
