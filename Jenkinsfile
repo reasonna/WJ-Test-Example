@@ -381,17 +381,15 @@ def createJiraIssue (String baseURL, String auth, String bugPayload) {
 
 def createLinkPayload(String outwardIssue, String inwardIssue, String linkType) {
     def payload = [
-         "fields": [
-            "outwardIssue": [
-                "key": "${outwardIssue}"
+        "outwardIssue": [
+            "key": "${outwardIssue}"
+        ],
+            "inwardIssue": [
+            "key": "${inwardIssue}"
             ],
-             "inwardIssue": [
-                "key": "${inwardIssue}"
-             ],
-            "type": [
-                "name": "${linkType}"
-            ]
-         ]
+        "type": [
+            "name": "${linkType}"
+        ]
     ]
     return JsonOutput.toJson(payload)
 }
