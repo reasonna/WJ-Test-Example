@@ -219,7 +219,7 @@ pipeline {
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
                                         // Defect <> TestPlan 링크연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-                                        // Tests <> Scenario 링크 연결
+                                        // Defect <> Scenario 링크 연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
@@ -234,8 +234,9 @@ pipeline {
                                         map.cucumber.errorMsg = after[0].result.error_message
                                         def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
-
+                                        // Defect <> TestPlan 링크연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
+                                        // Defect <> Scenario 링크 연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
 
 
@@ -252,16 +253,18 @@ pipeline {
                                             map.cucumber.errorMsg = "${step.name} No Match Method"
                                             def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
                                             def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
-
+                                            // Defect <> TestPlan 링크연결
                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
+                                            // Defect  <> Scenario 링크 연결
                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))                                                                                  
 
                                             break 
                                         }
                                         def bugPayload = createBugPayload("Defect of ${current_issue}", map.cucumber.errorMsg)
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
-
+                                        // Defect <> TestPlan 링크연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
+                                        // Defect <> Scenario 링크 연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
@@ -532,7 +535,7 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
     }
 }
 
-def transitionIssuePayload(String reportLink, String buildlId) {
+def transitionIssuePayload(String transition) {
     def payload = [
         "transition":[
             "id":"2"
