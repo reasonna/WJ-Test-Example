@@ -265,7 +265,7 @@ pipeline {
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
-
+                                        getJiraIssueTransition(map.jira.base_url, map.jira.auth,ISSUE_KEY)
                                         break
                                     }
                                 }
@@ -501,7 +501,7 @@ def linkIssue (String baseURL, String auth, String payload) {
     }
 }
 
-// cucmber report 추가
+// cucmber report, BUILD_ID 추가
 def editIssuePayload(String reportLink, String buildlId) {
     def payload = [
         "fields":[
@@ -529,28 +529,18 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
     }
 }
 
-def transitionIssuePayload(String transition) {
-    def payload = [
-        "transition":[
-            "id":"2"
-        ]
-    ]
-    return JsonOutput.toJson(payload)
-}
-
-def transitionIssue (String baseURL, String auth, String payload, String issueKey) {
+def getJiraIssueTransition (String baseURL, String auth, String issueKey){
     def conn = new URL("${baseURL}/rest/api/3/issue/${issueKey}/transitions").openConnection()
-    conn.setRequestMethod("PUT")
+    conn.setRequestMethod("GET")
     conn.setDoOutput(true)
     conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
     conn.addRequestProperty("Authorization", auth)
-    if(payload) {
-        conn.getOutputStream().write(payload.getBytes("UTF-8"))
-    }
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
-   
-    if(responseCode != 204){
-        throw new RuntimeException("Edit Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+    def result = new JsonSlurperClassic().parseText(response)
+
+    if(responseCode != 200){
+        throw new RuntimeException("getJiraIssueTransition Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
     }
+    return result
 }
