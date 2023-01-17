@@ -310,6 +310,7 @@ pipeline {
                     script {
                         println "!!!!!!!!!!!!!!!!! Generate cucumber reports !!!!!!!!!!!!!!!!!"
                         try {
+                            // https://plugins.jenkins.io/cucumber-reports/ 참고
                             cucumber buildStatus: 'UNSTABLE',
                                     reportTitle: 'cucumber report',
                                     fileIncludePattern: '**/*.json',    // .json 으로된 모든 파일 => cucumber관련 없는 파일도 있을 수 있어서 명확한 파일 경로 설정해 주는것이 좋음
@@ -317,7 +318,7 @@ pipeline {
                                     classifications: [
                                         [
                                             'key': 'Browser',
-                                            'value': 'Chrome'
+                                            'value': 'Chrome'   // 브라우저 우리가 쓰는걸로 변경
                                         ]
                                     ]
 
@@ -325,10 +326,7 @@ pipeline {
                             def reportLink = "${BUILD_URL}/${map.cucumber.report_link}"
                             
                             // cucumber reports 링크  같이 올려줌
-                            editIssue(map.jira.base_url, map.jira.auth,editIssuePayload(reportLink), ISSUE_KEY)
-                            // Build id 
-                            editIssue(map.jira.base_url, map.jira.auth,editIssuePayload(BUILD_ID), ISSUE_KEY)
-                            
+                            editIssue(map.jira.base_url, map.jira.auth,editIssuePayload(reportLink), ISSUE_KEY)                            
 
                         } catch(error) {
                             throwableException(map, error)
