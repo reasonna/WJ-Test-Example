@@ -206,6 +206,7 @@ pipeline {
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Tests"))
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
+
                                         
                                         continue 
                                    }
@@ -312,6 +313,25 @@ pipeline {
                 }
             }
         }
+
+        stage('Transition Issue'){
+            agent { label "${map.current_node}" }
+            steps {
+                dir("${map.current_path}/workspace/yuna") {
+                    script {
+                        println "!!!!!!!!!!!!!!!!! Transition Issue !!!!!!!!!!!!!!!!!"
+                        try {
+                            def transition = null
+                            transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload("${transition}"))
+                            
+                        } catch(error) {
+                            throwableException(map, error)
+                        }    
+                    } 
+                }
+            }
+        }
+        
     }        
 }
 
@@ -503,37 +523,28 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
     }
 }
 
-// def transitionIssuePayload(String assignee, String resolution, String transition) {
-//     def payload = [
-//         "fields":[
-//             "assignee": [
-//                 "name": "${assignee}"
-//                 ],
-//             "resolution":[
-//                 "name":"${resolution}"
-//             ]
-//         ],
-//          "transition": [
-//             "id": "${transition}"
-//         ]
+def transitionIssuePayload(String transition) {
+    def payload = [
+        "transition":[
+            "id":"${transition}"
+        ]
+    ]
+    return JsonOutput.toJson(payload)
+}
 
-//     ]
-//     return JsonOutput.toJson(payload)
-// }
-
-// def transitionIssue (String baseURL, String auth, String payload, String issueKey) {
-//     def conn = new URL("${baseURL}/rest/api/3/${issueKey}/transitions").openConnection()
-//     conn.setRequestMethod("POST")
-//     conn.setDoOutput(true)
-//     conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
-//     conn.addRequestProperty("Authorization", auth)
-//     if(payload) {
-//         conn.getOutputStream().write(payload.getBytes("UTF-8"))
-//     }
-//     def responseCode = conn.getResponseCode()
-//     def response = conn.getInputStream().getText()
+def transitionIssue (String baseURL, String auth, String payload, String issueKey) {
+    def conn = new URL("${baseURL}/rest/api/3/issue/${issueKey}/transitions").openConnection()
+    conn.setRequestMethod("PUT")
+    conn.setDoOutput(true)
+    conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+    conn.addRequestProperty("Authorization", auth)
+    if(payload) {
+        conn.getOutputStream().write(payload.getBytes("UTF-8"))
+    }
+    def responseCode = conn.getResponseCode()
+    def response = conn.getInputStream().getText()
    
-//     if(responseCode != 204){
-//         throw new RuntimeException("Edit Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
-//     }
-// }
+    if(responseCode != 204){
+        throw new RuntimeException("Edit Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+    }
+}
