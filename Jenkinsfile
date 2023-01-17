@@ -200,10 +200,10 @@ pipeline {
                                         map.cucumber.errorMsg = before[0].result.error_message
                                         def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
-                                        // Defect <> 링크연결
+                                        // Defect <> TestPlan 링크연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-                                        // Tests <> 링크 연결
-                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Tests"))
+                                        // Tests <> Scenario 링크 연결
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, map.issue.issueKey, "Tests"))
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
 
@@ -219,7 +219,7 @@ pipeline {
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Tests"))
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, map.issue.issueKey, "Tests"))
 
 
                                         continue 
@@ -237,7 +237,7 @@ pipeline {
                                             def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Tests"))                                                                                  
+                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, map.issue.issueKey, "Tests"))                                                                                  
 
                                             break 
                                         }
@@ -245,7 +245,7 @@ pipeline {
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Tests"))
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, map.issue.issueKey, "Tests"))
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
 
@@ -505,7 +505,7 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
 def transitionIssuePayload(String transition) {
     def payload = [
         "transition":[
-            "id":"${transition}"
+            "id":"2"
         ]
     ]
     return JsonOutput.toJson(payload)
