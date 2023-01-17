@@ -2,7 +2,7 @@ import groovy.json.JsonSlurperClassic
 import groovy.json.JsonOutput
 import groovy.json.JsonBuilder
 
-def map = [:]
+def map = [:]   // 제일먼저 선언
 pipeline {
     agent any  
     tools {
@@ -11,7 +11,7 @@ pipeline {
     environment{ 
         JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
-        APPIUM_ADDR = "0.0.0.0"
+        APPIUM_ADDR = "0.0.0.0"      // stage('Download testcases on slave') : Real device로 테스트하기 때문에 0.0.0.0 으로 실행
         BUILD_ID = "${BUILD_ID}"    // Jenkins에서 자동으로 만들어줌
         BUILD_URL = "${BUILD_URL}"  // Jenkins에서 자동으로 만들어줌
 
@@ -24,16 +24,18 @@ pipeline {
                     println "!!!!!!!!!!!!!!!!! Init !!!!!!!!!!!!!!!!!" 
                     println BUILD_ID
                     println BUILD_URL
-                    init(map)   
-                    map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'  
+                    init(map)   // 함수 아래에 정의하여 사용 => map.jira = [:] 선언
+                    map.jira.auth_user = '$JIRA_CLOUD_CREDENTIALS_USR:$JIRA_CLOUD_CREDENTIALS_PSW'  // 보안때문에 작은 따옴표로 {} 없이 사용
                     map.jira.auth = "Basic " + "${JIRA_CLOUD_CREDENTIALS_USR}:${JIRA_CLOUD_CREDENTIALS_PSW}".bytes.encodeBase64()
                 }
             }
         }
+        // Test plan issue 가져오기 => Jira Pipeline steps 플러그인 설치
         stage('Get test plan'){
             steps{
                 script{                   
                     println "!!!!!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
+                    // Jira Pipeline steps 플러그인 => jiraGetIssue API 사용
                     map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                     // println "Iseeue = > ${map.issue}"
                     map.jira.featureName = map.issue.fields.components[0].name
@@ -43,26 +45,32 @@ pipeline {
                 }
             }
         }
+        // 가져온 test plan에서 정보 습득하여 어떤 node에서 수행하는지 설정 
+        // => Jira Cloud의 test plan의 이슈에 Tablet info 라는 커스텀 필드((셀렉트타입))를 추가 : 현재 호스트에 붙어있는 패드이름
+        // Tablet info 필드: 필수입력값 => Field Configuration으로 설정, Renderers 타입을 Wiki로 
         stage('Get testcases / Set node'){
             steps{
                 script{
                     println "!!!!!!!!!!!!!!!!! Get testcases / Set node !!!!!!!!!!!!!!!!!"
                     def jql = map.issue.fields[map.jira.testCaseJQLField]         
                     def testTablet = map.issue.fields[map.jira.tabletInfoField].value
+                    // init method에서 지정해놓은 agents_ref 중 현재 설정된 Tablet info 필드 값과 일치하는 값이 있는지 확인 후 path, slave 설정
                     map.agents_ref.each { key, value -> 
                         if(testTablet == key){
                             map.current_node = key 
                             map.current_path = value
                         }
                     }
+                    // 들 증 하나라도 다르면 에러
                     if(map.current_node == null || map.current_path == null){
                         jenkinsException(map, "Tablet Info Field is Required")
                     }
-
+                    // jql로 이슈 가져오기
                     def result = getJiraIssuesByJql(map.jira.base_url, map.jira.auth, jql)
-                    if(result.issues.size() == 0){
+                    if(result.issues.size() == 0){      // 가져온 이슈 없으면 에러
                         jenkinsException(map, "Invalid JQL")
                     }
+                    // issueKey:scenario => map에 저장
                     for (def issue in result.issues){
                         map.testcases.put(issue.key, issue.fields[map.jira.scenario_field].content[0].content[0].text)
                     }
@@ -71,14 +79,19 @@ pipeline {
                 }
             }
         }
+        // 여기부터 pipeline 수행 
         stage('Download testcases on slave'){
-            agent { label "${map.current_node}" }
+            agent { label "${map.current_node}" }       // 지정한 slave node의 label
             steps {
-                // dir로 path 지정 => 이곳에서 slave작업 수행
+                // dir로 path 지정 : 위에서 만들어둔 map.current_path 사용 => 이곳에서 slave작업 수행
                 dir("${map.current_path}/workspace/yuna") {
                     script {
                         println "!!!!!!!!!!!!!!!!! Download testcases on slave !!!!!!!!!!!!!!!!!"
+                        // feature Name 지정
+                        // map.testcase에 담긴 각 시나리오를 feature 파일로 변환
                         def feature = "Feature: ${map.jira.featureName}\n\n"
+                        //  JIRA에 올라가 있는 scenario를 가져와서 description으로 해당 JIRA issue key를 붙여준다.
+                        //  issue key를 붙여주는 이유는 해당 시나리오가 JIRA에 어떤 issue와 매핑되는지 알기 위함
                         map.testcases.each { key, value ->
                             def addDescription = null 
                             if (value.contains("\r\n")){
@@ -93,9 +106,10 @@ pipeline {
                             }
                         }
                             // 해당 폴더 있으면 지우기 -> 할때마다 테스트 바뀌니까 (최신화)
+                            // fileExists : jenkins에서 제공하는 method
                         if (fileExists("${map.cucumber.feature_path}")){
                             bat script: """ rmdir /s /q "${map.cucumber.feature_path}" """, returnStdout:false
-                        }   // 파일 없으면 만들기
+                        }   // 폴더 없으면 만들기
                          bat script: """ mkdir "${map.cucumber.feature_path}" """, returnStdout:false
                          // auto.feature 이름 파일 만들고 그 안에 jira에서 가져온 시나리오 다 적어 주기
                          writeFile(file: "./${map.cucumber.feature_path}/auto.feature", text:feature, encoding:"UTF-8")
@@ -103,14 +117,14 @@ pipeline {
                 }
             }
         }
-        // 테스트 스크립트 빌드
+        // 테스트 실제 수행 위해 테스트 스크립트 빌드
         stage('Build'){
             agent { label "${map.current_node}" }
             steps {
                 dir("${map.current_path}/workspace/yuna") {
                     script {
                         println "!!!!!!!!!!!!!!!!! Build !!!!!!!!!!!!!!!!!"
-                        try {
+                        try {   // maven build project
                             bat script: 'mvn clean compile -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8', returnStdout:false
                         } catch(error) {
                             throwableException(map, error)
@@ -119,8 +133,9 @@ pipeline {
                 }
             }
         }
-        // 테스트 수행 => appium
+        // 테스트 수행 => appium server 실행
         stage('Run automation testing'){
+            // agent : 등록한 slavve에서만 해당 stage 실행
             agent { label "${map.current_node}" }
             steps {
                 dir("${map.current_path}/workspace/yuna") {
@@ -165,6 +180,8 @@ pipeline {
                             kill_output = bat encoding: "UTF-8", script: "taskkill /F /IM ${pid}", returnStdout:true
                             echo kill_output
 
+                            // 테스트가 모두 끝나고 생성되는 cucumber.json 파일을 읽어서 map에 저장
+                            // map.cucumber.result_text = readFile file: map.cucumber.report_json
                         } catch(error) {
                             throwableException(map, error)
                         }
@@ -252,6 +269,8 @@ pipeline {
                                         break
                                     }
                                 }
+
+                                BUILD_ID
                             }
                             
 
@@ -262,6 +281,7 @@ pipeline {
                 }
             }
         }
+        // defect 이슈 화면 캡쳐
         stage('Attach defect screenshot'){
             agent { label "${map.current_node}" }
             steps {
@@ -282,6 +302,7 @@ pipeline {
                 }
             }
         }
+        // jenkins plugin : cucumber reports 설치
          stage('Generate cucumber reports'){
             agent { label "${map.current_node}" }
             steps {
@@ -300,9 +321,14 @@ pipeline {
                                         ]
                                     ]
 
+                            // cucumber reports 보고 주소 어떻게 변하는지 확인 후 아래 링크 설정
                             def reportLink = "${BUILD_URL}/${map.cucumber.report_link}"
                             
+                            // cucumber reports 링크  같이 올려줌
                             editIssue(map.jira.base_url, map.jira.auth,editIssuePayload(reportLink), ISSUE_KEY)
+                            // Build id 
+                            editIssue(map.jira.base_url, map.jira.auth,editIssuePayload(BUILD_ID), ISSUE_KEY)
+                            
 
                         } catch(error) {
                             throwableException(map, error)
@@ -325,32 +351,34 @@ def throwableException(java.util.Map map, Exception e) {
 }
 def init (def map){
     map.jira = [:]
-    map.jira.site_name = "REASONA"                      // 내가 설정한 이름
-    map.jira.base_url = "https://reasona.atlassian.net" // jira 주소
+    map.jira.site_name = "REASONA"                      // stage('Get test plan') / 내가 설정한 이름 
     map.jira.featureName = null
-    map.jira.tabletInfoField = "customfield_10037"      // json online viewer로 보기
-    map.jira.testCaseJQLField ="customfield_10036"
-    map.testcases = [:]
-    map.jira.scenario_field = "customfield_10035"
+    map.jira.tabletInfoField = "customfield_10037"    
+    map.jira.base_url = "https://reasona.atlassian.net" // stage('Get testcases / Set node') >> jira 주소  
+    map.jira.testCaseJQLField ="customfield_10036"      // stage('Get testcases / Set node')
+    map.testcases = [:]                                 // stage('Get testcases / Set node')
+    map.jira.scenario_field = "customfield_10035"       // stage('Get testcases / Set node')
     map.agents_ref = [
-        "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      //구동가능한 기계
+        "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      // stage('Get testcases / Set node') >> 구동가능한 기계
     ]
-    map.cucumber = [:]
-    map.cucumber.feature_path = "auto_features"         // 파일 경로 생성
+
+    map.cucumber = [:]                                  // stage('Get test plan')
+    map.cucumber.feature_path = "auto_features"         // stage('Download testcases on slave') : 파일 경로 생성
     map.cucumber.glue = "stepdefinitions"
-    map.cucumber.report_json = "cucumber.json"
+    map.cucumber.report_json = "cucumber.json"          // stage('Run automation testing')
     map.cucumber.progress = "cucumber_progress.html"
     map.cucumber.cucumber_html = "cucumber_report.html"
-    map.current_node = null
-    map.current_path = null
-    map.cucumber.result_json = null
+    map.current_node = null                             // stage('Get testcases / Set node')
+    map.current_path = null                             // stage('Get testcases / Set node')
+    map.cucumber.result_json = null                     // stage('Run automation testing')
     map.cucumber.errorMsg = null
     map.cucumber.defect_info = [:]                      // defect 생길 경우, 해당 issueKey:scenario 명 저장
     map.cucumber.report_link = "cucumber-html-reports_f43d712d-34cf-37e2-891d-e19a85379e59/overview-features.html"  // Jenkins pligin 설치 => cucumber build 시 job number 별로 html 파일 생성해줌
-    map.issue = null
+    map.issue = null    // stage('Get test plan') => 원하는 Test plan 이슈 가져 올 수 있음
 
 }
 
+// jira cloud api 사용
 def getJiraIssue (String baseURL, String auth, String issueKey){
     def conn = new URL("${baseURL}/rest/api/3/issue/${issueKey}").openConnection()
     conn.setRequestMethod("GET")
@@ -367,6 +395,8 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
     return result
 }
 
+// JQL을 통해서 원하는 issue 가져오는 함수 
+// jira cloud api 사용 : Issue search > Search for issues using JQL (GET)
 def getJiraIssuesByJql (String baseURL, String auth, String jql){
     def jqlEncode = java.net.URLEncoder.encode(jql, "UTF-8")
     def conn = new URL("${baseURL}/rest/api/3/search?jql=${jqlEncode}").openConnection()
