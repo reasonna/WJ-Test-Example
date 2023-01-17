@@ -26,25 +26,27 @@ public class Hook {
         AndroidManager.getDriver().pressKey(new KeyEvent(AndroidKey.HOME)); 
     }
 
-    @After
+    @After  // 시나리오 끝나고 실행, step은 모두 시나리오 안에서 실행중
     public void after(Scenario scenario){
+        // 시나리오가 실패할때만 스크린샷 필요
         if(scenario.isFailed()) {
+            // 구글: appium screenshot 검색, Driver >> AndroidManager.getDriver로 바꿔서 넣rh BASE64로 받기
             String file = ((TakesScreenshot)AndroidManager.getDriver()).getScreenshotAs(OutputType.BASE64);
-            String filename = scenario.getName().trim().replaceAll(" ", "_");
-            byte[] decodedBase64 = Base64.decodeBase64(file);
+            String filename = scenario.getName().trim().replaceAll(" ", "_");   // 공백을 언더바로 바꾸기
+            byte[] decodedBase64 = Base64.decodeBase64(file);   // Base64 디코더
 
             String scrDir = "defect_screenshots";
-            new File(scrDir).mkdirs();
-            Path path = Paths.get("").toAbsolutePath();
+            new File(scrDir).mkdirs();  // 폴더만들기
+            Path path = Paths.get("").toAbsolutePath(); 
             String currentPath = path.toString();
-            System.out.println("currentPath: " + currentPath);
+            System.out.println("currentPath: " + currentPath);  // 확인
 
-            String dest =  filename + ".png";
+            String dest =  filename + ".png";   // .png파일로 만들기
             try{
                 OutputStream stream = new FileOutputStream(scrDir + "/" + dest);
                 stream.write(decodedBase64);
                 System.out.println("screenshot name = " + dest);
-                stream.close();
+                stream.close();     // stream 닫기
             } catch (IOException e){
                 e.printStackTrace();
             }

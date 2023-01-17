@@ -12,8 +12,8 @@ pipeline {
         JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
         APPIUM_ADDR = "0.0.0.0"
-        BUILD_ID = "${BUILD_ID}"
-        BUILD_URL = "${BUILD_URL}"
+        BUILD_ID = "${BUILD_ID}"    // Jenkins에서 자동으로 만들어줌
+        BUILD_URL = "${BUILD_URL}"  // Jenkins에서 자동으로 만들어줌
 
     }
 
@@ -292,7 +292,7 @@ pipeline {
                         try {
                             cucumber buildStatus: 'UNSTABLE',
                                     reportTitle: 'cucumber report',
-                                    fileIncludePattern: '**/*.json',
+                                    fileIncludePattern: '**/*.json',    // .json 으로된 모든 파일 => cucumber관련 없는 파일도 있을 수 있어서 명확한 파일 경로 설정해 주는것이 좋음
                                     trendsLimit: 10,
                                     classifications: [
                                         [
@@ -337,7 +337,7 @@ def init (def map){
         "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      //구동가능한 기계
     ]
     map.cucumber = [:]
-    map.cucumber.feature_path = "auto_features"
+    map.cucumber.feature_path = "auto_features"         // 파일 경로 생성
     map.cucumber.glue = "stepdefinitions"
     map.cucumber.report_json = "cucumber.json"
     map.cucumber.progress = "cucumber_progress.html"
@@ -346,8 +346,8 @@ def init (def map){
     map.current_path = null
     map.cucumber.result_json = null
     map.cucumber.errorMsg = null
-    map.cucumber.defect_info = [:]
-    map.cucumber.report_link = "cucumber-html-reports_f43d712d-34cf-37e2-891d-e19a85379e59/overview-features.html"
+    map.cucumber.defect_info = [:]                      // defect 생길 경우, 해당 issueKey:scenario 명 저장
+    map.cucumber.report_link = "cucumber-html-reports_f43d712d-34cf-37e2-891d-e19a85379e59/overview-features.html"  // Jenkins pligin 설치 => cucumber build 시 job number 별로 html 파일 생성해줌
     map.issue = null
 
 }
@@ -476,6 +476,7 @@ def linkIssue (String baseURL, String auth, String payload) {
     }
 }
 
+// cucmber report 추가
 def editIssuePayload(String reportLink) {
     def payload = [
         "fields":[
@@ -501,3 +502,38 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
         throw new RuntimeException("Edit Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
     }
 }
+
+// def transitionIssuePayload(String assignee, String resolution, String transition) {
+//     def payload = [
+//         "fields":[
+//             "assignee": [
+//                 "name": "${assignee}"
+//                 ],
+//             "resolution":[
+//                 "name":"${resolution}"
+//             ]
+//         ],
+//          "transition": [
+//             "id": "${transition}"
+//         ]
+
+//     ]
+//     return JsonOutput.toJson(payload)
+// }
+
+// def transitionIssue (String baseURL, String auth, String payload, String issueKey) {
+//     def conn = new URL("${baseURL}/rest/api/3/${issueKey}/transitions").openConnection()
+//     conn.setRequestMethod("POST")
+//     conn.setDoOutput(true)
+//     conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
+//     conn.addRequestProperty("Authorization", auth)
+//     if(payload) {
+//         conn.getOutputStream().write(payload.getBytes("UTF-8"))
+//     }
+//     def responseCode = conn.getResponseCode()
+//     def response = conn.getInputStream().getText()
+   
+//     if(responseCode != 204){
+//         throw new RuntimeException("Edit Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+//     }
+// }
