@@ -321,8 +321,18 @@ pipeline {
                     script {
                         println "!!!!!!!!!!!!!!!!! Transition Issue !!!!!!!!!!!!!!!!!"
                         try {
-                            def transition = null
-                            transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload("${transition}"))
+                            def transitionInput =
+                                [
+                                    transition: [
+                                        id: '2'
+                                    ]
+                                ]
+                            def issue_status = issue.data.fields.status.name.toString()
+                            println issue_status
+                            if(issue_status == "Builde Start") {
+                                transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(transitionInput))
+                            }
+                            
                             
                         } catch(error) {
                             throwableException(map, error)
