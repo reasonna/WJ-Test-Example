@@ -265,7 +265,7 @@ pipeline {
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
-                                        getJiraIssueTransition(map.jira.base_url, map.jira.auth,ISSUE_KEY)
+                                        
                                         break
                                     }
                                 }
@@ -354,6 +354,9 @@ def init (def map){
     map.jira.testCaseJQLField ="customfield_10036"      // stage('Get testcases / Set node')
     map.testcases = [:]                                 // stage('Get testcases / Set node')
     map.jira.scenario_field = "customfield_10035"       // stage('Get testcases / Set node')
+    // map.jira.fail_transition = "21"                     // transition id for test start -> test fail
+    // map.jira.success_transition = "31"                  // transition id for test start -> test success
+
     map.agents_ref = [
         "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      // stage('Get testcases / Set node') >> 구동가능한 기계
     ]
@@ -529,18 +532,30 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
     }
 }
 
-def getJiraIssueTransition (String baseURL, String auth, String issueKey){
+def transitionIssuePayload(String reportLink, String buildlId) {
+    def payload = [
+        "transition":[
+            "id":"2"
+        ]
+    ]
+    return JsonOutput.toJson(payload)
+}
+
+def transitionIssue (String baseURL, String auth, String payload, String issueKey) {
     def conn = new URL("${baseURL}/rest/api/3/issue/${issueKey}/transitions").openConnection()
-    conn.setRequestMethod("GET")
+    conn.setRequestMethod("POST")
     conn.setDoOutput(true)
     conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8")
     conn.addRequestProperty("Authorization", auth)
+    if(payload) {
+        conn.getOutputStream().write(payload.getBytes("UTF-8"))
+    }
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
-    def result = new JsonSlurperClassic().parseText(response)
-
-    if(responseCode != 200){
-        throw new RuntimeException("getJiraIssueTransition Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
+   
+    if(responseCode != 204){
+        throw new RuntimeException("Transition Jira Issue Error -> " + conn.getErrorStream() +" response: "+ conn.getResponseMessage() +" code: "+ responseCode )
     }
-    return result
 }
+
+
