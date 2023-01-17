@@ -203,7 +203,7 @@ pipeline {
                                         // Defect <> TestPlan 링크연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
                                         // Tests <> Scenario 링크 연결
-                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, map.issue.issueKey, "Tests"))
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
 
@@ -219,7 +219,7 @@ pipeline {
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, map.issue.issueKey, "Tests"))
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
 
 
                                         continue 
@@ -237,7 +237,7 @@ pipeline {
                                             def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, map.issue.issueKey, "Tests"))                                                                                  
+                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))                                                                                  
 
                                             break 
                                         }
@@ -245,7 +245,7 @@ pipeline {
                                         def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, map.issue.issueKey, "Tests"))
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
 
