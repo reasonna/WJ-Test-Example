@@ -269,8 +269,6 @@ pipeline {
                                         break
                                     }
                                 }
-
-                                BUILD_ID
                             }
                             
 
@@ -325,7 +323,7 @@ pipeline {
                             // cucumber reports 보고 주소 어떻게 변하는지 확인 후 아래 링크 설정
                             def reportLink = "${BUILD_URL}/${map.cucumber.report_link}"
                             
-                            // cucumber reports 링크  같이 올려줌
+                            // cucumber reports 링크, build id 같이 올려줌
                             editIssue(map.jira.base_url, map.jira.auth,editIssuePayload(reportLink, BUILD_ID), ISSUE_KEY)                            
 
                         } catch(error) {
