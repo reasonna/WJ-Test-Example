@@ -326,7 +326,7 @@ pipeline {
                             def reportLink = "${BUILD_URL}/${map.cucumber.report_link}"
                             
                             // cucumber reports 링크  같이 올려줌
-                            editIssue(map.jira.base_url, map.jira.auth,editIssuePayload(reportLink), ISSUE_KEY)                            
+                            editIssue(map.jira.base_url, map.jira.auth,editIssuePayload(reportLink, BUILD_ID), ISSUE_KEY)                            
 
                         } catch(error) {
                             throwableException(map, error)
@@ -504,10 +504,21 @@ def linkIssue (String baseURL, String auth, String payload) {
 }
 
 // cucmber report 추가
-def editIssuePayload(String reportLink) {
+def editIssuePayload(String reportLink, String buildlId) {
     def payload = [
         "fields":[
-            "customfield_10038":"${reportLink}"
+            "customfield_10038":"${reportLink}",
+            "customfield_10039": [
+                "type": "doc",
+                "version": 1,
+                "content": [
+                    "type": "paragraph",
+                    "content": [
+                        "text": "${buildlId}",
+                        "type": "text"
+                    ]
+                ]
+            ]
         ]
     ]
     return JsonOutput.toJson(payload)
