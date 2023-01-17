@@ -508,17 +508,7 @@ def editIssuePayload(String reportLink, String buildlId) {
     def payload = [
         "fields":[
             "customfield_10038":"${reportLink}",
-            "customfield_10039": [
-                "type": "doc",
-                "version": 1,
-                "content": [
-                    "type": "paragraph",
-                    "content": [
-                        "text": "${buildlId}",
-                        "type": "text"
-                    ]
-                ]
-            ]
+            "customfield_10039": "${buildlId}"
         ]
     ]
     return JsonOutput.toJson(payload)
