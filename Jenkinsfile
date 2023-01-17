@@ -237,8 +237,7 @@ pipeline {
                                             def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
 
                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
-                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Tests"))
-                                            
+                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Tests"))                                                                                  
 
                                             break 
                                         }
@@ -247,7 +246,6 @@ pipeline {
 
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Tests"))
-
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
 
@@ -312,36 +310,7 @@ pipeline {
                     } 
                 }
             }
-        }
-
-        stage('Transition Issue'){
-            agent { label "${map.current_node}" }
-            steps {
-                dir("${map.current_path}/workspace/yuna") {
-                    script {
-                        println "!!!!!!!!!!!!!!!!! Transition Issue !!!!!!!!!!!!!!!!!"
-                        try {
-                            def transitionInput =
-                                [
-                                    transition: [
-                                        id: '2'
-                                    ]
-                                ]
-                            def issue_status = issue.data.fields.status.name.toString()
-                            println issue_status
-                            if(issue_status == "Builde Start") {
-                                transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(transitionInput))
-                            }
-                            
-                            
-                        } catch(error) {
-                            throwableException(map, error)
-                        }    
-                    } 
-                }
-            }
-        }
-        
+        }  
     }        
 }
 
