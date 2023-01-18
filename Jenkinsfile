@@ -9,11 +9,11 @@ pipeline {
         maven "jenkins-maven"
     } 
     environment{ 
-        JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')
-        ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"
-        APPIUM_ADDR = "0.0.0.0"      // stage('Download testcases on slave') : Real device로 테스트하기 때문에 0.0.0.0 으로 실행
-        BUILD_ID = "${BUILD_ID}"    // Jenkins에서 자동으로 만들어줌
-        BUILD_URL = "${BUILD_URL}"  // Jenkins에서 자동으로 만들어줌
+        JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')  // Jenkins Web에서 설정한 값
+        ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"                 // Jira trigger를 통해 자동으로 받는 값
+        APPIUM_ADDR = "0.0.0.0"                             // stage('Download testcases on slave') : Real device로 테스트하기 때문에 0.0.0.0 으로 실행 => APPIUM_PORT="4723"
+        BUILD_ID = "${BUILD_ID}"                            // Jenkins에서 자동으로 만들어줌
+        BUILD_URL = "${BUILD_URL}"                          // Jenkins에서 자동으로 만들어줌
 
     }
 
@@ -39,6 +39,7 @@ pipeline {
                     map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                     // println "Iseeue = > ${map.issue}"
                     map.jira.featureName = map.issue.fields.components[0].name
+                    // Jira Component Field 아니면 
                     if(map.jira.featureName == null){
                         jenkinsException(map, "Jira Component Field is required")
                     }
@@ -353,15 +354,15 @@ def init (def map){
     map.jira.site_name = "REASONA"                      // stage('Get test plan') / 내가 설정한 이름 
     map.jira.featureName = null
     map.jira.tabletInfoField = "customfield_10037"    
-    map.jira.base_url = "https://reasona.atlassian.net" // stage('Get testcases / Set node') >> jira 주소  
+    map.jira.base_url = "https://reasona.atlassian.net" // stage('Get test plan') >> jira 주소  
     map.jira.testCaseJQLField ="customfield_10036"      // stage('Get testcases / Set node')
     map.testcases = [:]                                 // stage('Get testcases / Set node')
     map.jira.scenario_field = "customfield_10035"       // stage('Get testcases / Set node')
-    // map.jira.fail_transition = "21"                     // transition id for test start -> test fail
-    // map.jira.success_transition = "31"                  // transition id for test start -> test success
-
+    map.jira.fail_transition = "21"                     // transition id for test start -> test fail
+    map.jira.success_transition = "31"                  // transition id for test start -> test success
+    // Jenkins에서 실행하는 workplace
     map.agents_ref = [
-        "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      // stage('Get testcases / Set node') >> 구동가능한 기계
+        "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      // stage('Get testcases / Set node') >> X500 : 호스트에 붙어있는 구동가능한 기계
     ]
 
     map.cucumber = [:]                                  // stage('Get test plan')
@@ -429,7 +430,7 @@ def createBugPayload(String summary, String errorMessage) {
                 "id": "10006"
             ],
             "priority":[
-                "name":"High"
+                "name":"High"   // high, medium, low, lowest 중 선택
             ],
             "description" : [
                "type": "doc",
@@ -438,7 +439,7 @@ def createBugPayload(String summary, String errorMessage) {
                     [ 
                         "type": "codeBlock",
                         "attrs": [
-                            "language": "java"
+                            "language": "java"  // 사용하는 언어
                             ],
                         "content": [
                             [
@@ -538,7 +539,7 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
 def transitionIssuePayload(String transition) {
     def payload = [
         "transition":[
-            "id":"2"
+            "id":"${transition}"        // "2"
         ]
     ]
     return JsonOutput.toJson(payload)
