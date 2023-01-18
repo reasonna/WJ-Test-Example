@@ -390,6 +390,7 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
     conn.addRequestProperty("Authorization", auth)
     def responseCode = conn.getResponseCode()
     def response = conn.getInputStream().getText()
+    // 이슈정보 전달 위해서 response >> Json으로 변경해서 보내줌
     def result = new JsonSlurperClassic().parseText(response)
 
     if(responseCode != 200){

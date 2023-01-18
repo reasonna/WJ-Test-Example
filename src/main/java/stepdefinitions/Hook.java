@@ -30,7 +30,7 @@ public class Hook {
     public void after(Scenario scenario){
         // 시나리오가 실패할때만 스크린샷 필요
         if(scenario.isFailed()) {
-            // 구글: appium screenshot 검색, Driver >> AndroidManager.getDriver로 바꿔서 넣rh BASE64로 받기
+            // 구글: appium screenshot 검색, Driver >> AndroidManager.getDriver로 바꿔서 넣고 BASE64로 받기
             String file = ((TakesScreenshot)AndroidManager.getDriver()).getScreenshotAs(OutputType.BASE64);
             String filename = scenario.getName().trim().replaceAll(" ", "_");   // 공백을 언더바로 바꾸기
             byte[] decodedBase64 = Base64.decodeBase64(file);   // Base64 디코더
