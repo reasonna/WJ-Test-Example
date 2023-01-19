@@ -263,7 +263,7 @@ pipeline {
                                             // Defect <> TestPlan 링크연결
                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
                                             // Defect  <> Scenario 링크 연결
-                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))    
+                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, current_issue, "Tests"))    
 
                                             transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
                                             transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                                                                               
@@ -275,7 +275,7 @@ pipeline {
                                         // Defect <> TestPlan 링크연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
                                         // Defect <> Scenario 링크 연결
-                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, current_issue, "Tests"))
                                         // 디펙트인포를 가지고 정보를 전달
                                         map.cucumber.defect_info.put(res.key, scenario_name)
                                         
