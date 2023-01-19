@@ -286,7 +286,13 @@ pipeline {
                                         
                                         break
                                     }
-                                    transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                               
+                                    def transitionInput =
+                                        [
+                                            transition: [
+                                                id: '${map.jira.success_transition}'
+                                            ]
+                                        ]
+                                    transitionIssue(map.jira.base_url, map.jira.auth, transitionInput, ISSUE_KEY)                               
                                     
                                 }
                             }
