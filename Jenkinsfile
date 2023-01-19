@@ -293,7 +293,7 @@ pipeline {
                                     //         ]
                                     //     ]
                                     // transitionIssue(map.jira.base_url, map.jira.auth, transitionInput, ISSUE_KEY)    
-                                    // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                               
+                                    transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                               
 
                                     
                                 }
@@ -563,15 +563,6 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
 
 def transitionIssuePayload(String transition) {
     def payload = [
-         "update": [
-            "comment": [
-                [
-                    "add": [
-                        "body": "Comment added when resolving issue"
-                    ]
-                ]
-            ]
-    ],
         "transition":[
             "id":"${transition}"        // "2"
         ]
