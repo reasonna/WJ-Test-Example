@@ -238,7 +238,7 @@ pipeline {
                                         // Defect <> TestPlan 링크연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
                                         // Defect <> Scenario 링크 연결
-                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
+                                        linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, current_issue, "Tests"))
 
 
                                         continue 
@@ -250,7 +250,7 @@ pipeline {
                                         // TODO 로그 가져오기, 지라 defact issue 생성
                                         map.cucumber.errorMsg = step.result.error_message
                                         if(map.cucumber.errorMsg == null) {
-                                            // TODO undefine인 경우 처리하기
+                                            // TODO undefine인 경우 처리하기 (시나리오의 스텝이 있지만 메소드 구현이 안되어 있으면 undefine)
                                             map.cucumber.errorMsg = "${step.name} No Match Method"
                                             def bugPayload = createBugPayload("Defact of ${current_issue}", map.cucumber.errorMsg)
                                             def res = createJiraIssue(map.jira.base_url, map.jira.auth, bugPayload)
@@ -269,11 +269,17 @@ pipeline {
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
                                         // 디펙트인포를 가지고 정보를 전달
                                         map.cucumber.defect_info.put(res.key, scenario_name)
-
-                                        // testplan 상태변경 (transition)
-                                        // ready >jenkins(postman) duild> start >fail/success
-                                        transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
-                                        transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)
+                                        
+                                        // def issue_status = issue.data.fields.status.name.toString()
+                                        // println issue_status
+                                        
+                                        // if(issue_status == "Build Ready") {
+                                        //     // testplan 상태변경 (transition)
+                                        //     // ready >jenkins(postman) duild> start >fail/success
+                                        //     transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
+                                        //     transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)
+                                        // }
+                                        
 
                                         break
                                     }
