@@ -134,7 +134,7 @@ pipeline {
                 }
             }
         }
-        // 테스트 수행 => appium server 실행
+        // 테스트 수행 => appium server 실행 
         stage('Run automation testing'){
             // agent : 등록한 slavve에서만 해당 stage 실행
             agent { label "${map.current_node}" }
@@ -269,7 +269,12 @@ pipeline {
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, "${current_issue}", "Tests"))
                                         // 디펙트인포를 가지고 정보를 전달
                                         map.cucumber.defect_info.put(res.key, scenario_name)
-                                        
+
+                                        // testplan 상태변경 (transition)
+                                        // ready >jenkins(postman) duild> start >fail/success
+                                        transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition))
+                                        transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition))
+
                                         break
                                     }
                                 }
