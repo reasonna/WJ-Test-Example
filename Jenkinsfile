@@ -563,6 +563,15 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
 
 def transitionIssuePayload(String transition) {
     def payload = [
+         "update": [
+            "comment": [
+                [
+                    "add": [
+                        "body": "Comment added when resolving issue"
+                    ]
+                ]
+            ]
+    ],
         "transition":[
             "id":"${transition}"        // "2"
         ]
