@@ -225,9 +225,10 @@ pipeline {
 
                                         map.cucumber.defect_info.put(res.key, scenario_name)
 
+                                        // testplan 상태변경 (transition)
+                                        // ready >jenkins(postman) duild> start >fail/success
                                         transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
-                                        transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY) 
-
+                                        // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY) 
                                         
                                         continue 
                                    }
@@ -242,6 +243,9 @@ pipeline {
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
                                         // Defect <> Scenario 링크 연결
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, current_issue, "Tests"))
+                                         // testplan 상태변경 (transition)
+                                        // ready >jenkins(postman) duild> start >fail/success
+                                        // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
 
                                         continue 
                                     }
@@ -259,7 +263,10 @@ pipeline {
                                             // Defect <> TestPlan 링크연결
                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, ISSUE_KEY, "Defect"))
                                             // Defect  <> Scenario 링크 연결
-                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, current_issue, "Tests"))                                                                                 
+                                            linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, current_issue, "Tests"))   
+                                             // testplan 상태변경 (transition)
+                                            // ready >jenkins(postman) duild> start >fail/success
+                                            // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)                                                                              
 
                                             break 
                                         }
@@ -277,9 +284,9 @@ pipeline {
                                         // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
                                         // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                               
                                         
-
                                         break
                                     }
+
                                 }
                             }
                             
