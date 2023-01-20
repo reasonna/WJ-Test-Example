@@ -293,7 +293,7 @@ pipeline {
                                     //         ]
                                     //     ]
                                     // transitionIssue(map.jira.base_url, map.jira.auth, transitionInput, ISSUE_KEY)    
-                                    transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                               
+                                    // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                               
 
                                     
                                 }
@@ -563,37 +563,37 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
 
 def transitionIssuePayload(String transition) {
     def payload = [
-        "update": [
-            "comment": [
-            [
-                "add": [
-                "body": [
-                    "type": "doc",
-                    "version": 1,
-                    "content": [
-                   [ 
-                        "type": "paragraph",
-                        "content": [
-                        [
-                            "text": "Bug has been fixed",
-                            "type": "text"
-                        ]
-                        ]
-                    ]
-                    ]
-                ]
-                ]
-            ]
-            ]
-        ],
-        "fields": [
-            "assignee": [
-            "name": "bob"
-            ],
-            "resolution": [
-            "name": "Fixed"
-            ]
-        ],
+        // "update": [
+        //     "comment": [
+        //     [
+        //         "add": [
+        //         "body": [
+        //             "type": "doc",
+        //             "version": 1,
+        //             "content": [
+        //            [ 
+        //                 "type": "paragraph",
+        //                 "content": [
+        //                 [
+        //                     "text": "Bug has been fixed",
+        //                     "type": "text"
+        //                 ]
+        //                 ]
+        //             ]
+        //             ]
+        //         ]
+        //         ]
+        //     ]
+        //     ]
+        // ],
+        // "fields": [
+        //     "assignee": [
+        //     "name": "bob"
+        //     ],
+        //     "resolution": [
+        //     "name": "Fixed"
+        //     ]
+        // ],
         "transition":[
             "id":"${transition}"        // "2"
         ]
