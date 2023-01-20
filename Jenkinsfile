@@ -289,7 +289,7 @@ pipeline {
                                     // def transitionInput =
                                     //     [
                                     //         transition: [
-                                    //             id: '${map.jira.success_transition}'
+                                    //             id: '2'
                                     //         ]
                                     //     ]
                                     // transitionIssue(map.jira.base_url, map.jira.auth, transitionInput, ISSUE_KEY)    
@@ -382,8 +382,8 @@ def init (def map){
     map.jira.testCaseJQLField ="customfield_10036"      // stage('Get testcases / Set node')
     map.testcases = [:]                                 // stage('Get testcases / Set node')
     map.jira.scenario_field = "customfield_10035"       // stage('Get testcases / Set node')
-    map.jira.fail_transition = "21"                     // transition id for test start -> test fail
-    map.jira.success_transition = "31"                  // transition id for test start -> test success
+    map.jira.fail_transition = "21"                     // transition id : start -> test fail
+    map.jira.success_transition = "31"                  // transition id : start -> test success
     // Jenkins에서 실행하는 workplace
     map.agents_ref = [
         "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      // stage('Get testcases / Set node') >> X500 : 호스트에 붙어있는 구동가능한 기계
