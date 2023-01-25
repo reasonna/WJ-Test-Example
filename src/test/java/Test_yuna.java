@@ -45,8 +45,8 @@ public class Test_yuna {
 //                "","실제 책 이름: "
 //                        + wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle))).getText()+" 이 예상과 다름");
 ////        System.out.println("실제 책 이름" + wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(bookTitle))).getText()+"이 예상"+A+"과 다름");
-
-
+//
+//
 //    }
 
 

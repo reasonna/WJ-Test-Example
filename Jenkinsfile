@@ -227,8 +227,7 @@ pipeline {
 
                                         // testplan 상태변경 (transition)
                                         // ready >jenkins(postman) duild> start >fail/success
-                                        transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
-                                        // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY) 
+                                        // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
                                         
                                         continue 
                                    }
@@ -245,7 +244,7 @@ pipeline {
                                         linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, current_issue, "Tests"))
                                          // testplan 상태변경 (transition)
                                         // ready >jenkins(postman) duild> start >fail/success
-                                        transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
+                                        // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
 
                                         continue 
                                     }
@@ -266,7 +265,7 @@ pipeline {
                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, current_issue, "Tests"))   
                                              // testplan 상태변경 (transition)
                                             // ready >jenkins(postman) duild> start >fail/success
-                                            transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)                                                                              
+                                            // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)                                                                              
 
                                             break 
                                         }
@@ -281,13 +280,11 @@ pipeline {
                                         
                                         // testplan 상태변경 (transition)
                                         // ready >jenkins(postman) duild> start >fail/success
-                                        transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
                                         // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                               
                                         
                                         break
                                     }
-                                    
-                                    // transitionIssue(map.jira.base_url, map.jira.auth, transitionInput, ISSUE_KEY)    
+                                    // testplan 상태변경 (transition)
                                     // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                             
 
                                     
@@ -558,37 +555,6 @@ def editIssue (String baseURL, String auth, String payload, String issueKey) {
 
 def transitionIssuePayload(String transition) {
     def payload = [
-        // "update": [
-        //     "comment": [
-        //     [
-        //         "add": [
-        //         "body": [
-        //             "type": "doc",
-        //             "version": 1,
-        //             "content": [
-        //            [ 
-        //                 "type": "paragraph",
-        //                 "content": [
-        //                 [
-        //                     "text": "Bug has been fixed",
-        //                     "type": "text"
-        //                 ]
-        //                 ]
-        //             ]
-        //             ]
-        //         ]
-        //         ]
-        //     ]
-        //     ]
-        // ],
-        // "fields": [
-        //     "assignee": [
-        //     "name": "bob"
-        //     ],
-        //     "resolution": [
-        //     "name": "Fixed"
-        //     ]
-        // ],
         "transition":[
             "id":"${transition}"        // "2"
         ]
