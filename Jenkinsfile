@@ -9,7 +9,7 @@ pipeline {
         maven "jenkins-maven"
     } 
     environment{ 
-        JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')  // Jenkins Web에서 설정한 값
+        JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud-ynlee')  // Jenkins Web에서 설정한 값
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"                 // Jira trigger를 통해 자동으로 받는 값
         APPIUM_ADDR = "0.0.0.0"                             // stage('Download testcases on slave') : Real device로 테스트하기 때문에 0.0.0.0 으로 실행 => APPIUM_PORT="4723"
         BUILD_ID = "${BUILD_ID}"                            // Jenkins에서 자동으로 만들어줌
