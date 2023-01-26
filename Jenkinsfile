@@ -289,9 +289,10 @@ pipeline {
                                     
                                 }
                                 // testplan 상태변경 (transition)
-                                transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY) 
+                                // transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY) 
                             }
-                            
+                            // testplan 상태변경 (transition)
+                            transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY) 
 
                         } catch(error) {
                             throwableException(map, error)
