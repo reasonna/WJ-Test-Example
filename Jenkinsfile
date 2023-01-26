@@ -265,7 +265,9 @@ pipeline {
                                             linkIssue(map.jira.base_url, map.jira.auth, createLinkPayload(res.key, current_issue, "Tests"))   
                                              // testplan 상태변경 (transition)
                                             // ready >jenkins(postman) duild> start >fail/success
-                                            transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)                                                                              
+                                            transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)  
+                                            transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)                               
+
 
                                             break 
                                         }
