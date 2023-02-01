@@ -33,17 +33,17 @@ public class Test_yuna {
 //    @Test
 //    public void basicTest() throws InterruptedException {
 //        //Click and pass Splash
-//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(Constants.lib_btn))).click();
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(Constants.lib_btn_xpath))).click();
 //        //Click I am searching a job
-//        AndroidManager.getElementById(Constants.s_input).click();
-//        AndroidManager.getElementById(Constants.s_input).sendKeys();
-//        AndroidManager.getElementById(Constants.search).click();
-//        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id(Constants.resultBook))).get(1).click();
-//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle))).getText();
-//        System.out.println(wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle))).getText());
-//        Assert.assertEquals(wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle))).getText(),
+//        AndroidManager.getElementById(Constants.search_input_id).click();
+//        AndroidManager.getElementById(Constants.search_input_id).sendKeys();
+//        AndroidManager.getElementById(Constants.search_icon_id).click();
+//        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id(Constants.resultBook_id))).get(1).click();
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle_id))).getText();
+//        System.out.println(wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle_id))).getText());
+//        Assert.assertEquals(wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle_id))).getText(),
 //                "","실제 책 이름: "
-//                        + wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle))).getText()+" 이 예상과 다름");
+//                        + wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle_id))).getText()+" 이 예상과 다름");
 ////        System.out.println("실제 책 이름" + wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(bookTitle))).getText()+"이 예상"+A+"과 다름");
 //
 //
