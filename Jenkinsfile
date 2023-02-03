@@ -269,10 +269,6 @@ pipeline {
                                         // 디펙트인포를 가지고 정보를 전달
                                         map.cucumber.defect_info.put(res.key, scenario_name)
                                         
-                                        // testplan 상태변경 (transition)
-                                        // ready >jenkins(postman) duild> start >fail/success
-                                        transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)  
-
                                         break
                                     }                            
                                 }
