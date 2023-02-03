@@ -276,11 +276,11 @@ pipeline {
 
                             if(isPassed){
                                 // testplan 상태변경 (transition)
-                                // ready >jenkins(postman) duild> start >fail/success
+                                // ready >jenkins(postman) build> start >fail/success
                                 transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.success_transition), ISSUE_KEY)
                             } else {
                                 // testplan 상태변경 (transition)
-                                // ready >jenkins(postman) duild> start >fail/success
+                                // ready >jenkins(postman) build> start >fail/success
                                 transitionIssue(map.jira.base_url, map.jira.auth, transitionIssuePayload(map.jira.fail_transition), ISSUE_KEY)
                             }
                             
