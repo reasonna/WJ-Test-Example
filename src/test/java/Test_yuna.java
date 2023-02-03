@@ -41,8 +41,7 @@ public class Test_yuna {
 //        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.id(Constants.resultBook_id))).get(1).click();
 //        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle_id))).getText();
 //        System.out.println(wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle_id))).getText());
-//        Assert.assertEquals(wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle_id))).getText(),
-//                "","실제 책 이름: "
+//        Assert.assertEquals(wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle_id))).getText(), "","실제 책 이름: "
 //                        + wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(Constants.bookTitle_id))).getText()+" 이 예상과 다름");
 ////        System.out.println("실제 책 이름" + wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(bookTitle))).getText()+"이 예상"+A+"과 다름");
 //
