@@ -145,6 +145,7 @@ pipeline {
                         try {
                             // appium 연결/시작
                             bat script: 'adb devices', returnStdout:false
+                            // ! logcat
                             bat script: 'adb logcat | grep "failed" > error.log'
                             // bat script: 'adb kill-server', returnStdout:false
                             // bat script: 'adb start-server', returnStdout:false
