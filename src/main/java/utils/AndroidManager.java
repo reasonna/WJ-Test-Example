@@ -30,6 +30,11 @@ public class AndroidManager {
                 caps.setCapability("platformName", "Android");
                 caps.setCapability("platformVersion", "10");
                 driver = new AndroidDriver(url, caps);
+                // 로그 레벨 설정
+                driver.manage().logs().getAvailableLogTypes();
+                // 앱 로그 확인
+                System.out.println(driver.manage().logs().get("logcat").getAll());
+
             }catch(MalformedURLException e){
                 throw new RuntimeException(e);
             }

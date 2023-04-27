@@ -1,5 +1,6 @@
 package stepdefinitions;
 
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -66,5 +67,7 @@ public class MyStepdefs {
         // 가져오는 텍스트가 예상과 실제가 동일한지 확인 
         Assert.assertEquals(AndroidManager.getElementById(Constants.view_check_id).getText(),"감상문 보기");
     }
+
+
 }
 

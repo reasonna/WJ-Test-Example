@@ -13,7 +13,7 @@ Feature: wj
 
     Given library click
     When search button click
-    And  search input ""
+    And  search input "귀로듣는 모차르트"
     And search click
     And click 2nd book
     And ok check click

@@ -29,6 +29,7 @@
             <version>4.7.1</version>
         </dependency>
 
+<!--       이거 없음 -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-api</artifactId>
