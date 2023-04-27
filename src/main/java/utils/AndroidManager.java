@@ -25,8 +25,8 @@ public class AndroidManager {
             DesiredCapabilities caps = new DesiredCapabilities();
             try {
                 URL url = new URL("http://127.0.0.1:4723/wd/hub");
-                caps.setCapability("deviceName", "x500");
-                caps.setCapability("udid", "R9TT502BVQT"); //DeviceId from "adb devices" command
+                caps.setCapability("deviceName", "M2 Pad");
+                caps.setCapability("udid", "WJD11AFN02513"); //DeviceId from "adb devices" command
                 caps.setCapability("platformName", "Android");
                 caps.setCapability("platformVersion", "10");
                 driver = new AndroidDriver(url, caps);
