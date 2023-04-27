@@ -9,7 +9,7 @@ pipeline {
         maven "jenkins-maven"
     } 
     environment{ 
-        JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud-ynlee')  // Jenkins Web에서 설정한 값
+        JIRA_CLOUD_CREDENTIALS = credentials('REASONA')  // Jenkins Web에서 설정한 값
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"                 // Jira trigger를 통해 자동으로 받는 값
         APPIUM_ADDR = "0.0.0.0"                             // stage('Download testcases on slave') : Real device로 테스트하기 때문에 0.0.0.0 으로 실행 => APPIUM_PORT="4723"
         BUILD_ID = "${BUILD_ID}"                            // Jenkins에서 자동으로 만들어줌
@@ -371,7 +371,7 @@ def init (def map){
     map.jira.success_transition = "31"                  // transition id : start -> test success
     // Jenkins에서 실행하는 workplace
     map.agents_ref = [
-        "X500":"C:\\Users\\TB-NTB-223\\CICD\\x500"      // !stage('Get testcases / Set node') >> X500 : 호스트에 붙어있는 구동가능한 기계
+        "M2 Pad":"C:\\Users\\TB-NTB-223\\CICD\\M2 Pad"      // !stage('Get testcases / Set node') >> X500 : 호스트에 붙어있는 구동가능한 기계
     ]
 
     map.cucumber = [:]                                  // stage('Get test plan')
