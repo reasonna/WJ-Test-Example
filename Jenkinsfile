@@ -9,7 +9,7 @@ pipeline {
         maven "jenkins-maven"
     } 
     environment{ 
-        JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud-ynlee')  // Jenkins Web에서 설정한 값
+        JIRA_CLOUD_CREDENTIALS = credentials('REASONA')  // Jenkins Web에서 설정한 값, 연결된 지라에 따라 Name 변경 필요
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"                 // Jira trigger를 통해 자동으로 받는 값
         APPIUM_ADDR = "0.0.0.0"                             // stage('Download testcases on slave') : Real device로 테스트하기 때문에 0.0.0.0 으로 실행 => APPIUM_PORT="4723"
         BUILD_ID = "${BUILD_ID}"                            // Jenkins에서 자동으로 만들어줌
@@ -145,6 +145,8 @@ pipeline {
                         try {
                             // appium 연결/시작
                             bat script: 'adb devices', returnStdout:false
+                            // ! logcat 안드로이드 앱 로그 추출
+                            bat script: 'adb logcat | grep "failed" > error.log'
                             // bat script: 'adb kill-server', returnStdout:false
                             // bat script: 'adb start-server', returnStdout:false
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
