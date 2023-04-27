@@ -9,7 +9,7 @@ pipeline {
         maven "jenkins-maven"
     } 
     environment{ 
-        JIRA_CLOUD_CREDENTIALS = credentials('REASONA')  // Jenkins Web에서 설정한 값, 연결된 지라에 따라 Name 변경 필요
+        JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud-ynlee')  // Jenkins Web에서 설정한 값
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"                 // Jira trigger를 통해 자동으로 받는 값
         APPIUM_ADDR = "0.0.0.0"                             // stage('Download testcases on slave') : Real device로 테스트하기 때문에 0.0.0.0 으로 실행 => APPIUM_PORT="4723"
         BUILD_ID = "${BUILD_ID}"                            // Jenkins에서 자동으로 만들어줌
@@ -145,7 +145,6 @@ pipeline {
                         try {
                             // appium 연결/시작
                             bat script: 'adb devices', returnStdout:false
-                            // ! logcat 안드로이드 앱 로그 추출
                             bat script: 'adb logcat | grep "failed" > error.log'
                             // bat script: 'adb kill-server', returnStdout:false
                             // bat script: 'adb start-server', returnStdout:false
@@ -361,7 +360,7 @@ def throwableException(java.util.Map map, Exception e) {
 }
 def init (def map){
     map.jira = [:]
-    map.jira.site_name = "REASONA"                      // stage('Get test plan') / 내가 설정한 이름 
+    map.jira.site_name = "REASONA"                      //! stage('Get test plan') / 내가 설정한 이름 
     map.jira.featureName = null
     map.jira.tabletInfoField = "customfield_10037"    
     map.jira.base_url = "https://reasona.atlassian.net" // stage('Get test plan') >> jira 주소  
@@ -372,7 +371,7 @@ def init (def map){
     map.jira.success_transition = "31"                  // transition id : start -> test success
     // Jenkins에서 실행하는 workplace
     map.agents_ref = [
-        "X500":"C:\\Users\\TB-NTB-223\\CICD\\X500"      // stage('Get testcases / Set node') >> X500 : 호스트에 붙어있는 구동가능한 기계
+        "X500":"C:\\Users\\TB-NTB-223\\CICD\\x500"      // !stage('Get testcases / Set node') >> X500 : 호스트에 붙어있는 구동가능한 기계
     ]
 
     map.cucumber = [:]                                  // stage('Get test plan')
@@ -386,12 +385,12 @@ def init (def map){
     map.cucumber.result_json = null                     // stage('Run automation testing')
     map.cucumber.errorMsg = null
     map.cucumber.defect_info = [:]                      // defect 생길 경우, 해당 issueKey:scenario 명 저장
-    map.cucumber.report_link = "cucumber-html-reports_f43d712d-34cf-37e2-891d-e19a85379e59/overview-features.html"  // Jenkins pligin 설치 => cucumber build 시 job number 별로 html 파일 생성해줌
+    map.cucumber.report_link = "cucumber-html-reports_f43d712d-34cf-37e2-891d-e19a85379e59/overview-features.html"  // !Jenkins pligin 설치 => cucumber build 시 job number 별로 html 파일 생성해줌
     map.issue = null    // stage('Get test plan') => 원하는 Test plan 이슈 가져 올 수 있음
 
 }
 
-// jira cloud api 사용
+// !jira cloud api 사용
 def getJiraIssue (String baseURL, String auth, String issueKey){
     def conn = new URL("${baseURL}/rest/api/3/issue/${issueKey}").openConnection()
     conn.setRequestMethod("GET")
@@ -409,7 +408,7 @@ def getJiraIssue (String baseURL, String auth, String issueKey){
     return result
 }
 
-// JQL을 통해서 원하는 issue 가져오는 함수 
+// !JQL을 통해서 원하는 issue 가져오는 함수 
 // jira cloud api 사용 : Issue search > Search for issues using JQL (GET)
 def getJiraIssuesByJql (String baseURL, String auth, String jql){
     def jqlEncode = java.net.URLEncoder.encode(jql, "UTF-8")
