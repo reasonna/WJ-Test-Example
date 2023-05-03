@@ -9,7 +9,7 @@ pipeline {
         maven "jenkins-maven"
     } 
     environment{ 
-        JIRA_CLOUD_CREDENTIALS = credentials('REASONA')  // Jenkins Web에서 설정한 값
+        JIRA_CLOUD_CREDENTIALS = credentials('jira-cloud')  // Jenkins Web에서 설정한 값
         ISSUE_KEY = "${JIRA_TEST_PLAN_KEY}"                 // Jira trigger를 통해 자동으로 받는 값
         APPIUM_ADDR = "0.0.0.0"                             // stage('Download testcases on slave') : Real device로 테스트하기 때문에 0.0.0.0 으로 실행 => APPIUM_PORT="4723"
         BUILD_ID = "${BUILD_ID}"                            // Jenkins에서 자동으로 만들어줌
@@ -35,18 +35,18 @@ pipeline {
             steps{
                 script{                   
                     println "!!!!!!!!!!!!!!!!! Get test plan !!!!!!!!!!!!!!!!!"
-                    // Jira Pipeline steps 플러그인 => jiraGetIssue API 사용
+                    // ! Jira Pipeline steps 플러그인 => jiraGetIssue API 사용
                     map.issue = getJiraIssue(map.jira.base_url, map.jira.auth, ISSUE_KEY)
                     // println "Iseeue = > ${map.issue}"
                     map.jira.featureName = map.issue.fields.components[0].name
-                    // Jira Component Field 아니면 
+                    // Jira Component Field 아니면 에러
                     if(map.jira.featureName == null){
                         jenkinsException(map, "Jira Component Field is required")
                     }
                 }
             }
         }
-        // 가져온 test plan에서 정보 습득하여 어떤 node에서 수행하는지 설정 
+        // * 가져온 test plan에서 정보 습득하여 어떤 node에서 수행하는지 설정 
         // => Jira Cloud의 test plan의 이슈에 Tablet info 라는 커스텀 필드((셀렉트타입))를 추가 : 현재 호스트에 붙어있는 패드이름
         // Tablet info 필드: 필수입력값 => Field Configuration으로 설정, Renderers 타입을 Wiki로 
         stage('Get testcases / Set node'){
