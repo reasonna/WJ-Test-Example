@@ -146,7 +146,7 @@ pipeline {
                             // appium 연결/시작
                             bat script: 'adb devices', returnStdout:false
                             // ! logcat
-                            bat script: 'adb logcat | grep "failed" > error.log'
+                            // bat script: 'adb logcat | grep "failed" > error.log'
                             // bat script: 'adb kill-server', returnStdout:false
                             // bat script: 'adb start-server', returnStdout:false
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
@@ -330,7 +330,7 @@ pipeline {
                                     classifications: [
                                         [
                                             'key': 'Browser',
-                                            'value': 'Chrome'   // 브라우저 우리가 쓰는걸로 변경
+                                            'value': 'Whale'   // 브라우저 우리가 쓰는걸로 변경
                                         ]
                                     ]
 
@@ -372,7 +372,7 @@ def init (def map){
     map.jira.success_transition = "31"                  // transition id : start -> test success
     // Jenkins에서 실행하는 workplace
     map.agents_ref = [
-        "M2 Pad":"C:\\Users\\TB-NTB-223\\CICD\\M2 Pad"      // !stage('Get testcases / Set node') >> X500 : 호스트에 붙어있는 구동가능한 기계
+        "M2 Pad":"C:\\Users\\TB-NTB-223\\CICD\\m2"      // !stage('Get testcases / Set node') >> X500 : 호스트에 붙어있는 구동가능한 기계
     ]
 
     map.cucumber = [:]                                  // stage('Get test plan')
