@@ -332,7 +332,7 @@ pipeline {
                                     classifications: [
                                         [
                                             'key': 'Browser',
-                                            'value': 'Whale'   // 브라우저 우리가 쓰는걸로 변경
+                                            'value': 'Chrome'   // 브라우저 우리가 쓰는걸로 변경
                                         ]
                                     ]
 
