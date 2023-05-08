@@ -166,9 +166,9 @@ pipeline {
                             }
 
                             // ! logcat
-                            bat script: 'adb logcat | grep "failed" > error.log'
-                            bat script: 'adb kill-server', returnStdout:false
-                            bat script: 'adb start-server', returnStdout:false
+                            // bat script: 'adb logcat | grep "failed" > error.log'
+                            // bat script: 'adb kill-server', returnStdout:false
+                            // bat script: 'adb start-server', returnStdout:false
 
                         } catch(error) {
                             throwableException(map, error)
@@ -349,6 +349,22 @@ pipeline {
                 }
             }
         }  
+        stage('Logcat') {
+            steps {
+                dir("${map.current_path}/workspace/yuna"){
+                    println "!!!!!!!!!!!!!!!!! Logcat !!!!!!!!!!!!!!!!!"
+                    try{
+                        bat 'adb logcat -d > log.txt'
+                        bat 'cat log.txt | grep "Failed scenario" > failed_scenario_logs.txt'
+                        archiveArtifacts 'failed_scenario_logs.txt'
+                    }catch(error){
+                        throwableException(map, error)
+                        }    
+                    }
+                }
+            }
+        }
+
     }        
 }
 
