@@ -148,6 +148,11 @@ pipeline {
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
                             sleep 2
+
+                            // ! Extract logcat logs
+                            bat "adb logcat -d > logcat.txt"
+                            //! Publish logcat logs as build artifact
+                            archiveArtifacts artifacts: 'logcat.txt'
                              // 해당 파일 있으면 지우기 -> 할때마다 테스트 바뀌니까 (최신화)
                             if (fileExists("${map.cucumber.report_json}")){
                                 bat script: """ del "${map.cucumber.report_json}" """, returnStdout:false
