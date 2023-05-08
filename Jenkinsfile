@@ -127,6 +127,12 @@ pipeline {
                         println "!!!!!!!!!!!!!!!!! Build !!!!!!!!!!!!!!!!!"
                         try {   // maven build project
                             bat script: 'mvn clean compile -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8', returnStdout:false
+
+                            // ! logcat
+                            bat script: 'adb logcat | grep "failed" > error.log'
+                            bat script: 'adb kill-server', returnStdout:false
+                            bat script: 'adb start-server', returnStdout:false
+                            
                         } catch(error) {
                             throwableException(map, error)
                         }    
@@ -145,10 +151,6 @@ pipeline {
                         try {
                             // appium 연결/시작
                             bat script: 'adb devices', returnStdout:false
-                            // ! logcat
-                            // bat script: 'adb logcat | grep "failed" > error.log'
-                            // bat script: 'adb kill-server', returnStdout:false
-                            // bat script: 'adb start-server', returnStdout:false
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
                             sleep 2
@@ -169,13 +171,6 @@ pipeline {
                                 println "Automation testing error -> " + error
                             }
 
-                            // 안드로이드 앱 빌드 스크립트 실행
-                            bat script: './gradlew assembleDebug'
-
-                            // logcat 실행
-                            bat script: 'adb logcat -d > logcat.txt'
-                            archiveArtifacts 'logcat.txt'
-                            
                         } catch(error) {
                             throwableException(map, error)
                         }    
