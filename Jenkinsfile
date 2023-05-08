@@ -168,6 +168,14 @@ pipeline {
                             } catch(error){
                                 println "Automation testing error -> " + error
                             }
+
+                            // 안드로이드 앱 빌드 스크립트 실행
+                            bat script: './gradlew assembleDebug'
+
+                            // logcat 실행
+                            bat script: 'adb logcat -d > logcat.txt'
+                            archiveArtifacts 'logcat.txt'
+                            
                         } catch(error) {
                             throwableException(map, error)
                         }    
