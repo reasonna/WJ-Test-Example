@@ -360,7 +360,6 @@ pipeline {
                     }catch(error){
                         throwableException(map, error)
                         }    
-                    }
                 }
             }
         }
