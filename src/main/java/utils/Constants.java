@@ -12,8 +12,7 @@ public class Constants {
 
     public static String hamburger_btn = "com.wjthinkbig.mepubviewer2:id/btnShowButtons";
 
-    public static String book_view_xpath = "\t\n" +
-            "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.RelativeLayout[3]/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout[6]/android.view.View[1]";
+    public static String book_view_id = "com.wjthinkbig.mepubviewer2:id/btn_right_read_feeling";
     public static String ok_btn_id = "com.wjthinkbig.mepubviewer2:id/btn_ok";
 
     public static  String view_ok_btn_id ="com.wjthinkbig.mepubviewer2:id/btn_ok";

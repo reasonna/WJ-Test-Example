@@ -54,7 +54,7 @@ public class MyStepdefs {
 
     @Then("book view click")
     public void bookViewClick() {
-        AndroidManager.getElementByXpath(Constants.book_view_xpath).click();
+        AndroidManager.getElementByXpath(Constants.book_view_id).click();
     }
 
     @Then("view ok button click")
