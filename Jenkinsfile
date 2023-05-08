@@ -149,6 +149,12 @@ pipeline {
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
                             sleep 2
 
+                            // * Windows에서 adb logcat 명령을 실행. -d 옵션을 사용하여 로그를 캡쳐하고 > 기호를 사용하여 logcat.txt 파일에 저장. 
+                            // * 마지막으로 readFile 명령어를 사용하여 파일을 읽고, echo 명령어를 사용하여 콘솔에 출력
+                            // bat "adb logcat -d > ${map.current_path}/logcat.txt"
+                            // def logcatContent = readFile "${map.current_path}/logcat.txt"
+                            // echo logcatContent
+
                             // ! Extract logcat logs
                             bat "adb logcat -d > logcat.txt"
                             //! Publish logcat logs as build artifact
