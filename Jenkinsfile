@@ -349,21 +349,7 @@ pipeline {
                 }
             }
         }  
-        stage('Logcat') {
-            steps {
-                dir("${map.current_path}/workspace/yuna"){
-                    println "!!!!!!!!!!!!!!!!! Logcat !!!!!!!!!!!!!!!!!"
-                    try{
-                        bat 'adb logcat -d > log.txt'
-                        bat 'cat log.txt | grep "Failed scenario" > failed_scenario_logs.txt'
-                        archiveArtifacts 'failed_scenario_logs.txt'
-                    }catch(error){
-                        throwableException(map, error)
-                        }    
-                }
-            }
-        }
-
+        
     }        
 }
 
