@@ -127,12 +127,6 @@ pipeline {
                         println "!!!!!!!!!!!!!!!!! Build !!!!!!!!!!!!!!!!!"
                         try {   // maven build project
                             bat script: 'mvn clean compile -D file.encoding=UTF-8 -D project.build.sourceEncoding=UTF-8 -D project.reporting.outputEncoding=UTF-8', returnStdout:false
-
-                            // ! logcat
-                            bat script: 'adb logcat | grep "failed" > error.log'
-                            bat script: 'adb kill-server', returnStdout:false
-                            bat script: 'adb start-server', returnStdout:false
-                            
                         } catch(error) {
                             throwableException(map, error)
                         }    
@@ -170,6 +164,11 @@ pipeline {
                             } catch(error){
                                 println "Automation testing error -> " + error
                             }
+
+                            // ! logcat
+                            bat script: 'adb logcat | grep "failed" > error.log'
+                            bat script: 'adb kill-server', returnStdout:false
+                            bat script: 'adb start-server', returnStdout:false
 
                         } catch(error) {
                             throwableException(map, error)
