@@ -161,7 +161,7 @@ pipeline {
                             // echo logcatContent
 
                             // ! Extract logcat logs
-                            bat "adb logcat -s ${serialNumbers} > ${serialNumbers}_logcat.txt"
+                            bat "adb logcat -d ${serialNumbers} > ${serialNumbers}_logcat.txt"
                             //! Publish logcat logs as build artifact
                             archiveArtifacts artifacts: "${serialNumbers}_logcat.txt"
                              // 해당 파일 있으면 지우기 -> 할때마다 테스트 바뀌니까 (최신화)
