@@ -146,8 +146,8 @@ pipeline {
                             // appium 연결/시작
                             // bat script: 'adb devices', returnStdout:false
                             // * 
-                            def devices = bat(returnStdout: false, script: 'adb devices')
-                            def serialNumbers = bat(returnStdout: true, script: 'adb devices | grep -oP "^\\S+\t\\K\\S+"').trim()
+                            def devices = bat(returnStdout: true, script: 'adb devices')
+                            def serialNumbers = devices.split('\n')[1..-2].collect { it.split()[0] }
                             echo "Serial numbers: ${serialNumbers}"
 
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
