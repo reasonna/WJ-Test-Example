@@ -148,9 +148,9 @@ pipeline {
                             // bat script: 'adb devices', returnStdout:false
                             // * 
                             def devices = bat(returnStdout: true, script: 'adb devices')
-                            def serialNumbers = devices.split('\n')[1..-2].collect { it.split()[3][0] }
+                            def serialNumbers = devices.split('\n')[1..-2].collect { it.split()[0] }
                             echo "Serial numbers: ${serialNumbers}"
-                            def serialNumber = text.substring(text.indexOf('[')+1, text.indexOf(']')).split(',')[1].trim()
+                            def serialNumber = serialNumbers[2]
                             echo "Serial number: ${serialNumber}"
 
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
@@ -158,8 +158,8 @@ pipeline {
                             sleep 2
 
                             // ! adb logcat 명령어를 실행
-                            bat "adb -s ${serialNumber} logcat -d > logcat-${serialNumber}.txt"
-                            archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
+                            // bat "adb -s ${serialNumber} logcat -d > logcat-${serialNumber}.txt"
+                            // archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
 
                             // Windows에서 adb logcat 명령을 실행. -d 옵션을 사용하여 로그를 캡쳐하고 > 기호를 사용하여 logcat.txt 파일에 저장. 
                             // 마지막으로 readFile 명령어를 사용하여 파일을 읽고, echo 명령어를 사용하여 콘솔에 출력
