@@ -148,10 +148,10 @@ pipeline {
                             // bat script: 'adb devices', returnStdout:false
                             // * 
                             def devices = bat(returnStdout: true, script: 'adb devices')
-                            def serialNumbers = devices.split('\n')[1..-2]
+                            def serialNumbers = devices.split('\n')[1..-2].collect { it.split()[3][0] }
                             echo "Serial numbers: ${serialNumbers}"
-                            // def serialNumber = text.substring(text.indexOf('[')+1, text.indexOf(']')).split(',')[1].trim()
-                            // echo "Serial number: ${serialNumber}"
+                            def serialNumber = text.substring(text.indexOf('[')+1, text.indexOf(']')).split(',')[1].trim()
+                            echo "Serial number: ${serialNumber}"
 
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
