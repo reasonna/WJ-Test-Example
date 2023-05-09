@@ -145,22 +145,26 @@ pipeline {
                         try {
                             // appium 연결/시작
                             // * returnStdout: true 옵션을 사용하면 해당 명령어의 실행 결과를 문자열로 반환. 기본값은 false이며, 이 경우 실행 결과를 콘솔 출력으로 표시
-                            // bat script: 'adb devices', returnStdout:false
+                            bat script: 'adb devices', returnStdout:false
                             // * 
-                            def devices = bat(returnStdout: true, script: 'adb devices')
-                            def serialNumbers = devices.split('\n')[1..-2].collect { it.split()[0] }
-                            echo "Serial numbers: ${serialNumbers}"
-                            def serialNumber = serialNumbers[2]
-                            echo "Serial number: ${serialNumber}"
+                            // def devices = bat(returnStdout: true, script: 'adb devices')
+                            // def serialNumbers = devices.split('\n')[1..-2].collect { it.split()[0] }
+                            // echo "Serial numbers: ${serialNumbers}"
+                            // def serialNumber = serialNumbers[2]
+                            // echo "Serial number: ${serialNumber}"
 
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
                             sleep 2
 
                             // ! adb logcat 명령어를 실행
-                            bat "adb -s ${serialNumber} logcat -d > logcat-${serialNumber}.txt"
-                            archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
+                            if (map.current_node == "M2 Pad"){
+                                def serialNumber = "WJD11AFN02513"
+                                echo "Serial number: ${serialNumber}"
+                                bat "adb -s ${serialNumber} logcat -d > logcat-${serialNumber}.txt"
+                                archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
 
+                            }
                             // Windows에서 adb logcat 명령을 실행. -d 옵션을 사용하여 로그를 캡쳐하고 > 기호를 사용하여 logcat.txt 파일에 저장. 
                             // 마지막으로 readFile 명령어를 사용하여 파일을 읽고, echo 명령어를 사용하여 콘솔에 출력
                             // bat "adb logcat -d > ${map.current_path}/logcat.txt"
