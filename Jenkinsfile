@@ -144,7 +144,12 @@ pipeline {
                         println "!!!!!!!!!!!!!!!!! Run automation testing !!!!!!!!!!!!!!!!!"
                         try {
                             // appium 연결/시작
-                            bat script: 'adb devices', returnStdout:false
+                            // bat script: 'adb devices', returnStdout:false
+                            // * 
+                            def devices = bat(returnStdout: true, script: 'adb devices',returnStdout:false)
+                            def serialNumbers = devices.split('\n')[1..-2].collect { it.split()[0] }
+                            echo "Serial numbers: ${serialNumbers}"
+
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
                             sleep 2
@@ -156,9 +161,9 @@ pipeline {
                             // echo logcatContent
 
                             // ! Extract logcat logs
-                            bat "adb logcat -d > logcat.txt"
+                            bat "adb logcat -s ${serialNumbers} > ${serialNumbers}_logcat.txt"
                             //! Publish logcat logs as build artifact
-                            archiveArtifacts artifacts: 'logcat.txt'
+                            archiveArtifacts artifacts: "${serialNumbers}_logcat.txt"
                              // 해당 파일 있으면 지우기 -> 할때마다 테스트 바뀌니까 (최신화)
                             if (fileExists("${map.cucumber.report_json}")){
                                 bat script: """ del "${map.cucumber.report_json}" """, returnStdout:false
