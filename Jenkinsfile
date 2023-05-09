@@ -147,7 +147,7 @@ pipeline {
                             // bat script: 'adb devices', returnStdout:false
                             // * 
                             def devices = bat(returnStdout: false, script: 'adb devices')
-                            def serialNumbers = devices.split('\n')[1..-2].collect { it.split()[0] }
+                            def serialNumbers = bat(returnStdout: false, script: 'adb devices | grep -oP "\\b\\d{5,}\\b"').trim().split('\n')
                             echo "Serial numbers: ${serialNumbers}"
 
                             // Background에서 실행 -> 다음 스테이지 실행하기 위해
