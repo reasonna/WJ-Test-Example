@@ -164,7 +164,7 @@ pipeline {
                                 def serialNumber = "WJD11AFN02513"
                                 echo "Serial number: ${serialNumber}"
                                 
-                                def logcat_file = "logcat_${currentBuild.number}-${serialNumber}.txt"
+                                def logcat_file = "logcat_${currentBuild.number}_${serialNumber}.txt"
                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}"
                                 archiveArtifacts artifacts: logcat_file, fingerprint: true
 
