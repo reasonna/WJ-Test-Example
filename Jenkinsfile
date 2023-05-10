@@ -175,7 +175,7 @@ pipeline {
 //                                 // bat "adb -s ${serialNumber} logcat -d > ${logcat_file}.txt"
 //                                 // bat "adb -s ${serialNumber} logcat -d | findstr \"EXCEPTION\" > failed_${logcat_file}.txt"
 //                                 // archiveArtifacts artifacts: "logcat-${serialNumber}.txt, failed_${logcat_file}.txt", allowEmptyArchive: true
-                                archiveArtifacts artifacts: "${logcat_file}"
+                                // archiveArtifacts artifacts: "${logcat_file}"
 // }
                             }
                             if (map.current_node == "Others"){
