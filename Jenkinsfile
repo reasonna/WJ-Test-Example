@@ -165,7 +165,7 @@ pipeline {
                                 echo "Serial number: ${serialNumber}"
                                 
                                // 이전 빌드의 로그 파일 삭제
-                                cleanDir 'logs'
+                                bat "del ${logcat_file}-${serialNumber}.txt"
 
                                 // 새로운 로그 파일 생성
                                 def logcat_file = "logs/logcat_${currentBuild.number}.txt"
