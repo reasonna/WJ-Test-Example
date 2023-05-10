@@ -164,7 +164,7 @@ pipeline {
                                 def serialNumber = "WJD11AFN02513"
                                 echo "Serial number: ${serialNumber}"
                                 bat "adb -s ${serialNumber} logcat -d > logcat-${serialNumber}.txt"
-                                 bat "adb -s ${serialNumber} logcat -d | findstr \"ERROR\" > failed_logs-${serialNumber}.txt"
+                                 bat "adb -s ${serialNumber} logcat -d | findstr \"Error\" > failed_logs-${serialNumber}.txt"
                                 archiveArtifacts artifacts: "logcat-${serialNumber}.txt, failed_logs-${serialNumber}.txt", allowEmptyArchive: true
                                 // archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
                             }
