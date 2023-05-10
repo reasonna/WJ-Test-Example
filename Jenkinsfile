@@ -391,7 +391,7 @@ pipeline {
                             cucumber buildStatus: 'UNSTABLE',
                                     reportTitle: 'cucumber report',
                                     fileIncludePattern: '**/*.json',    // .json 으로된 모든 파일 => cucumber관련 없는 파일도 있을 수 있어서 명확한 파일 경로 설정해 주는것이 좋음
-                                    additionalJsonReportFiles: "${local_file}",
+                                    additionalJsonReportFiles: '${logcat_file}-${serialNumber}.txt',
                                     trendsLimit: 10,
                                     classifications: [
                                         [
