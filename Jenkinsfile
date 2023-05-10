@@ -164,14 +164,16 @@ pipeline {
                                 def serialNumber = "WJD11AFN02513"
                                 echo "Serial number: ${serialNumber}"
                                 
-                                def logcat_file = "logcat_${currentBuild.number}.txt"
+                                def logcat_file = "logcat_${currentBuild.number}-${serialNumber}.txt"
+                                bat "adb -s ${serialNumber} logcat -d > ${logcat_file}"
+                                archiveArtifacts artifacts: logcat_file, fingerprint: true
 
-                                bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
-                                // bat "adb -s ${serialNumber} logcat -d > ${logcat_file}.txt"
-                                // bat "adb -s ${serialNumber} logcat -d | findstr \"EXCEPTION\" > failed_${logcat_file}.txt"
-                                // archiveArtifacts artifacts: "logcat-${serialNumber}.txt, failed_${logcat_file}.txt", allowEmptyArchive: true
-                                archiveArtifacts artifacts: "${logcat_file}-${serialNumber}.txt", allowEmptyArchive: true, fingerprint: true, onlyIfSuccessful: false, caseSensitive: true, defaultExcludes: true, latestOnly: false, projectName: "${JOB_NAME}", buildSelector: "${BUILD_NUMBER}"
-}
+//                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
+//                                 // bat "adb -s ${serialNumber} logcat -d > ${logcat_file}.txt"
+//                                 // bat "adb -s ${serialNumber} logcat -d | findstr \"EXCEPTION\" > failed_${logcat_file}.txt"
+//                                 // archiveArtifacts artifacts: "logcat-${serialNumber}.txt, failed_${logcat_file}.txt", allowEmptyArchive: true
+//                                 archiveArtifacts artifacts: "${logcat_file}-${serialNumber}.txt"
+// }
                             }
                             if (map.current_node == "Others"){
                                 def serialNumber = "WJD06AR00065"
@@ -379,7 +381,7 @@ pipeline {
                             // https://plugins.jenkins.io/cucumber-reports/ 참고
                             cucumber buildStatus: 'UNSTABLE',
                                     reportTitle: 'cucumber report',
-                                    fileIncludePattern: '**/*.json',    // .json 으로된 모든 파일 => cucumber관련 없는 파일도 있을 수 있어서 명확한 파일 경로 설정해 주는것이 좋음
+                                    fileIncludePattern: '**/*.json, **/logcat_*.txt',    // .json 으로된 모든 파일 => cucumber관련 없는 파일도 있을 수 있어서 명확한 파일 경로 설정해 주는것이 좋음
                                     trendsLimit: 10,
                                     classifications: [
                                         [
