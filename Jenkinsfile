@@ -172,7 +172,7 @@ pipeline {
                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
 
                                 // 로컬 PC에 txt 파일로 저장
-                                def workspace = env.WORKSPACE
+                                def workspace = "${map.current_path}/workspace/yuna"
                                 def local_file = "${workspace}/${logcat_file}-${serialNumber}.txt"
                                 bat "adb -s ${serialNumber} logcat -d > ${local_file}"
 
