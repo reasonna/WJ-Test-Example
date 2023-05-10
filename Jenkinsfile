@@ -166,9 +166,9 @@ pipeline {
                                 
                                 def logcat_file = "logcat_${currentBuild.number}.txt"
 
-                                bat "adb -s ${serialNumber} logcat -d > logcat-${logcat_file}.txt"
-                                bat "adb -s ${serialNumber} logcat -d | findstr \"Error\" > failed_logs-${logcat_file}.txt"
-                                archiveArtifacts artifacts: "logcat-${logcat_file}txt, failed_logs-${logcat_file}.txt", allowEmptyArchive: true
+                                bat "adb -s ${serialNumber} logcat -d > ${logcat_file}.txt"
+                                bat "adb -s ${serialNumber} logcat -d | findstr \"Error\" > failed_${logcat_file}.txt"
+                                archiveArtifacts artifacts: "${logcat_file}txt, failed_${logcat_file}.txt", allowEmptyArchive: true
                                 // archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
                             }
                             if (map.current_node == "Others"){
