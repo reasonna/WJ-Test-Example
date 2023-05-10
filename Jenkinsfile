@@ -392,7 +392,7 @@ pipeline {
                                             'value': 'Whale'   // 브라우저 우리가 쓰는걸로 변경
                                         ]
                                     ],
-                                    additionalJsonReportFiles: "${logcat_file}"
+                                    additionalJsonReportFiles: "${logcat_file}-${serialNumber}.txt"
 
                             // cucumber reports 보고 주소 어떻게 변하는지 확인 후 아래 링크 설정
                             def reportLink = "${BUILD_URL}/${map.cucumber.report_link}"
