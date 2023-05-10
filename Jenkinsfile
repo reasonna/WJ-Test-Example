@@ -168,8 +168,8 @@ pipeline {
                                 // bat "del ${logcat_file}-${serialNumber}.txt"
 
                                 // 새로운 로그 파일 생성
-                                def logcat_file = "logs/logcat_${currentBuild.number}.txt"
-                                bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
+                                def logcat_file = "${logcat_file}-${serialNumber}.txt"
+                                bat "adb -s ${serialNumber} logcat -d > ${logcat_file}"
 
 //                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
 //                                 // bat "adb -s ${serialNumber} logcat -d > ${logcat_file}.txt"
