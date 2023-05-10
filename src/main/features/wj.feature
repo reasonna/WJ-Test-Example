@@ -4,7 +4,7 @@ Feature: wj
 
     Given library click
     When search button click
-    And  search input "네모, 안녕?"
+    And  search input "날아라 풀씨야"
     And search click
     And click 2nd book
     Then check book title
