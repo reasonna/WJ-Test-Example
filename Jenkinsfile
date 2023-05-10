@@ -164,9 +164,12 @@ pipeline {
                                 def serialNumber = "WJD11AFN02513"
                                 echo "Serial number: ${serialNumber}"
                                 
-                                def logcat_file = "logcat_${currentBuild.number}_${serialNumber}.txt"
-                                bat "adb -s ${serialNumber} logcat -d > ${logcat_file}"
-                                archiveArtifacts artifacts: logcat_file, fingerprint: true
+                               // 이전 빌드의 로그 파일 삭제
+                                cleanDir 'logs'
+
+                                // 새로운 로그 파일 생성
+                                def logcat_file = "logs/logcat_${currentBuild.number}.txt"
+                                bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
 
 //                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
 //                                 // bat "adb -s ${serialNumber} logcat -d > ${logcat_file}.txt"
@@ -381,14 +384,15 @@ pipeline {
                             // https://plugins.jenkins.io/cucumber-reports/ 참고
                             cucumber buildStatus: 'UNSTABLE',
                                     reportTitle: 'cucumber report',
-                                    fileIncludePattern: '**/*.json, **/logcat_*.txt',    // .json 으로된 모든 파일 => cucumber관련 없는 파일도 있을 수 있어서 명확한 파일 경로 설정해 주는것이 좋음
+                                    fileIncludePattern: '**/*.json',    // .json 으로된 모든 파일 => cucumber관련 없는 파일도 있을 수 있어서 명확한 파일 경로 설정해 주는것이 좋음
                                     trendsLimit: 10,
                                     classifications: [
                                         [
                                             'key': 'Browser',
                                             'value': 'Whale'   // 브라우저 우리가 쓰는걸로 변경
                                         ]
-                                    ]
+                                    ],
+                                    additionalJsonReportFiles: "${logcat_file}"
 
                             // cucumber reports 보고 주소 어떻게 변하는지 확인 후 아래 링크 설정
                             def reportLink = "${BUILD_URL}/${map.cucumber.report_link}"
