@@ -165,7 +165,7 @@ pipeline {
                                 echo "Serial number: ${serialNumber}"
                                 
                                // 이전 빌드의 로그 파일 삭제
-                                bat "del ${logcat_file}-${serialNumber}.txt"
+                                // bat "del ${logcat_file}-${serialNumber}.txt"
 
                                 // 새로운 로그 파일 생성
                                 def logcat_file = "logs/logcat_${currentBuild.number}.txt"
@@ -175,7 +175,7 @@ pipeline {
 //                                 // bat "adb -s ${serialNumber} logcat -d > ${logcat_file}.txt"
 //                                 // bat "adb -s ${serialNumber} logcat -d | findstr \"EXCEPTION\" > failed_${logcat_file}.txt"
 //                                 // archiveArtifacts artifacts: "logcat-${serialNumber}.txt, failed_${logcat_file}.txt", allowEmptyArchive: true
-//                                 archiveArtifacts artifacts: "${logcat_file}-${serialNumber}.txt"
+                                archiveArtifacts artifacts: "${logcat_file}-${serialNumber}.txt"
 // }
                             }
                             if (map.current_node == "Others"){
