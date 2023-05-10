@@ -157,12 +157,16 @@ pipeline {
                             bat "start /B appium --address ${APPIUM_ADDR} --port ${APPIUM_PORT}"
                             sleep 2
 
+                            println "current node: " + map.current_node
+
                             // ! adb logcat 명령어를 실행.
                             if (map.current_node == "M2 Pad"){
                                 def serialNumber = "WJD11AFN02513"
                                 echo "Serial number: ${serialNumber}"
                                 bat "adb -s ${serialNumber} logcat -d > logcat-${serialNumber}.txt"
-                                archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
+                                 bat "adb -s ${serialNumber} logcat -d | findstr \"ERROR\" > failed_logs-${serialNumber}.txt"
+                                archiveArtifacts artifacts: "logcat-${serialNumber}.txt, failed_logs-${serialNumber}.txt", allowEmptyArchive: true
+                                // archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
                             }
                             if (map.current_node == "Others"){
                                 def serialNumber = "WJD06AR00065"
@@ -170,13 +174,13 @@ pipeline {
                                 bat "adb -s ${serialNumber} logcat -d > logcat-${serialNumber}.txt"
                                 archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
                             }
-                            if (map.current_node == "SM-T500"){
+                            if (map.current_node == "T500"){
                                 def serialNumber = "R9TT502BVQT"
                                 echo "Serial number: ${serialNumber}"
                                 bat "adb -s ${serialNumber} logcat -d > logcat-${serialNumber}.txt"
                                 archiveArtifacts artifacts: "logcat-${serialNumber}.txt"
                             }
-                            if (map.current_node == "SM-T583"){
+                            if (map.current_node == "T583"){
                                 def serialNumber = "5200e1baf41648e7"
                                 echo "Serial number: ${serialNumber}"
                                 bat "adb -s ${serialNumber} logcat -d > logcat-${serialNumber}.txt"
