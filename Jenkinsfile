@@ -163,10 +163,14 @@ pipeline {
                             if (map.current_node == "M2 Pad"){
                                 def serialNumber = "WJD11AFN02513"
                                 echo "Serial number: ${serialNumber}"
+
+                                // workspace 경로 정의
+                                def workspace = "${map.current_path}/workspace/yuna"
                                 
                                // 이전 빌드의 로그 파일 삭제
                                 // bat "del ${logcat_file}-${serialNumber}.txt"
-
+                                bat "adb logcat -c"
+                               
                                // 새로운 로그 파일 생성
                                 def logcat_file = "${currentBuild.number}.txt"
                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
