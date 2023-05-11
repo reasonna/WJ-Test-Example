@@ -161,19 +161,33 @@ pipeline {
 
                             // ! adb logcat 명령어를 실행.
                             if (map.current_node == "M2 Pad"){
-                                def serialNumber = "WJD11AFN02513"
+                                def serialNumber = "WJD11AFN20617"
+                                def logcat_file = "${serialNumber}-${currentBuild.number}.txt"
+                                def workspace = "${map.current_path}/workspace/yuna"
+
+                                // 이전 빌드의 로그 파일 삭제
+                                if (fileExists("${workspace}/${logcat_file}")) {
+                                    delete file: "${workspace}/${logcat_file}"
+                                }
+
                                 echo "Serial number: ${serialNumber}"
-
-                                // workspace 경로 정의
-                                // def workspace = "${map.current_path}/workspace/yuna"
-                                
-                               // 이전 빌드의 로그 파일 삭제
-                                // bat "del ${logcat_file}-${serialNumber}.txt"
-                                // bat "adb logcat -c"
-
-                                def logcat_file = "${serialNumber}_${currentBuild.number}.txt"
                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}"
+
+                                // 빌드 아티팩트에 로그 파일 저장
                                 archiveArtifacts artifacts: "${logcat_file}"
+                            //     def serialNumber = "WJD11AFN02513"
+                            //     echo "Serial number: ${serialNumber}"
+
+                            //     // workspace 경로 정의
+                            //     // def workspace = "${map.current_path}/workspace/yuna"
+                                
+                            //    // 이전 빌드의 로그 파일 삭제
+                            //     // bat "del ${logcat_file}-${serialNumber}.txt"
+                            //     bat "adb logcat -c"
+
+                            //     def logcat_file = "${serialNumber}_${currentBuild.number}.txt"
+                            //     bat "adb -s ${serialNumber} logcat -d > ${logcat_file}"
+                            //     archiveArtifacts artifacts: "${logcat_file}"
                                 
                             //    // 새로운 로그 파일 생성
                             //     def logcat_file = "${currentBuild.number}.txt"
