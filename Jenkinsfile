@@ -170,18 +170,22 @@ pipeline {
                                // 이전 빌드의 로그 파일 삭제
                                 // bat "del ${logcat_file}-${serialNumber}.txt"
                                 bat "adb logcat -c"
-                               
-                               // 새로운 로그 파일 생성
-                                def logcat_file = "${currentBuild.number}.txt"
-                                bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
 
-                                // 로컬 PC에 txt 파일로 저장
-                                def workspace = "${map.current_path}/workspace/yuna"
-                                def local_file = "${workspace}/${logcat_file}-${serialNumber}.txt"
-                                bat "adb -s ${serialNumber} logcat -d > ${local_file}"
+                                def logcat_file = "${serialNumber}_${currentBuild.number}.txt"
+                                bat "adb -s ${serialNumber} logcat -d > ${logcat_file}"
+                                archiveArtifacts artifacts: "${logcat_file}"
+                                
+                            //    // 새로운 로그 파일 생성
+                            //     def logcat_file = "${currentBuild.number}.txt"
+                            //     bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
 
-                                 // 로그 파일 저장
-                                archiveArtifacts artifacts: "${local_file}", fingerprint: true
+                            //     // 로컬 PC에 txt 파일로 저장
+                            //     def workspace = "${map.current_path}/workspace/yuna"
+                            //     def local_file = "${workspace}/${logcat_file}-${serialNumber}.txt"
+                            //     bat "adb -s ${serialNumber} logcat -d > ${local_file}"
+
+                            //      // 로그 파일 저장
+                            //     archiveArtifacts artifacts: "${local_file}", fingerprint: true
 
 
 //                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
