@@ -165,11 +165,11 @@ pipeline {
                                 echo "Serial number: ${serialNumber}"
 
                                 // workspace 경로 정의
-                                def workspace = "${map.current_path}/workspace/yuna"
+                                // def workspace = "${map.current_path}/workspace/yuna"
                                 
                                // 이전 빌드의 로그 파일 삭제
                                 // bat "del ${logcat_file}-${serialNumber}.txt"
-                                bat "adb logcat -c"
+                                // bat "adb logcat -c"
 
                                 def logcat_file = "${serialNumber}_${currentBuild.number}.txt"
                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}"
