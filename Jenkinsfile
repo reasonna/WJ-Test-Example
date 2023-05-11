@@ -180,6 +180,9 @@ pipeline {
                                 def local_file = "${workspace}/${logcat_file}-${serialNumber}.txt"
                                 bat "adb -s ${serialNumber} logcat -d > ${local_file}"
 
+                                 // 로그 파일 저장
+                                archiveArtifacts artifacts: "${local_file}", fingerprint: true
+
 
 //                                 bat "adb -s ${serialNumber} logcat -d > ${logcat_file}-${serialNumber}.txt"
 //                                 // bat "adb -s ${serialNumber} logcat -d > ${logcat_file}.txt"
